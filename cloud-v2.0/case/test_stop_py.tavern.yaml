@@ -1,0 +1,36 @@
+---
+test_name: 登陆
+
+stages:
+  - name: 验证正常登陆
+    request:
+      url: "http://172.16.130.252:38080/login.do"
+      method: POST
+      verify: false
+      data:
+        userId: administrator
+        password: 9DyrH0qty0SqrdsvVCjnJQ==
+        userType: 0
+        loginType: 1
+    response:
+      status_code: 200
+      #json:
+      save:
+        $ext:
+          function: utils:save_cookie
+
+  - name: 验证停止虚拟机
+    request:
+      url: "http://172.16.130.252:38080/physicalmachine/stop.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie:s}"
+      data:
+        hostid: e6ce162605524326bdff5beb7f026759
+        "ogAction[id]": 1703
+        "logAction[name]": vm.compute
+        "logAction[async]": 0
+    response:
+      status_code: 200
+
