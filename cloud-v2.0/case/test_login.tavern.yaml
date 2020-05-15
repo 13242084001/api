@@ -1,0 +1,25 @@
+---
+test_name: check login or eeror login
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: check correct login
+    request:
+      url: "{url}/login.do"
+      method: POST
+      verify: false
+      data:
+        userId: "{userId}"
+        password: "{password}"
+        userType: 0
+        loginType: 1
+    response:
+      status_code: 200
+      #json:
+      verify_response_with:
+        function: verify.verify:check_login_response_headers
+      save:
+        $ext:
+          function: utils.utils:save_cookie

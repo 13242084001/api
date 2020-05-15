@@ -1,0 +1,11 @@
+---
+
+# Each file should have a name and description
+name: Common variables
+description: Common variables
+
+# Variables should just be a mapping of key: value pairs
+variables:
+  url: http://172.16.130.252:38080
+  userId: administrator
+  password: 9DyrH0qty0SqrdsvVCjnJQ==
