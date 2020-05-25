@@ -1,0 +1,31 @@
+---
+test_name: 2_硬件设施-主存储-修改主存储
+
+includes:
+  - !include ../test_login.yaml
+  - !include mainStorage_query.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_mainStorage
+  - name: 修改主存储信息
+    request:
+      url: "{url}/primarystorage/update.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          async: 0
+          id: 1802
+          name: "sdd-after"
+        msid: "{msid}"
+        msname: "sdd-after"
+        remark: "sdd-after"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_mainStorage_update_ok

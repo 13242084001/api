@@ -1,0 +1,27 @@
+---
+name: 2_硬件设施-区域管理-查询区域列表
+description: 查询区域列表
+
+stages:
+  - id: query_zone_list
+    name: 验证查询区域列表正常
+    request:
+      url: "{url}/zone/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        #这里应传数组，多个id之间用逗号隔开
+        keyword: ""
+        limit: 20
+        offset: 0
+        order: asc
+
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_zone
+      save:
+        $ext:
+          function: utils.utils:save_zone_ids

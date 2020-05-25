@@ -1,0 +1,29 @@
+---
+name: 硬件设施-主存储-查询主存储列表
+description: 查询主存储列表
+
+stages:
+  - id: query_mainStorage
+    name: 验证查询主存储列表
+    request:
+      url: "{url}/primarystorage/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        keyword: ""
+        limit: 20
+        offset: 0
+        order: asc
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_mainStorage_query_ok
+      save:
+        json:
+          msid: rows[0].msid
+          msname: rows[0].msname
+        $ext:
+          function: utils.utils:save_mainStorage_msids
+

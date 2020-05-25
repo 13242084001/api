@@ -1,0 +1,44 @@
+---
+name: 注销后切换区域
+description: 切换区域
+
+stages:
+  - id: logout
+    name: ---
+    request:
+      url: "{url}/logout.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+
+    response:
+      status_code: 200
+      #verify_response_with:
+      #  function: verify.verify:logout_ok
+
+  - id: query_cluster
+    name: check query_cluster
+    request:
+      url: "{url}/cluster/query.do"
+      method: GET
+      verify: false
+      headers:
+        #Referer: "http://172.16.130.254:38080/cluster.html?id=441"
+        Cookie: "{cookie}"
+        Content-Type: application/json
+      params:
+        order: asc
+        offset: "0"
+        limit: "20"
+        keyword: ""
+        _: 1589902374600
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_cluster
+      save:
+        $ext:
+          function: utils.utils:save_cluster_clusterinfo
+
+

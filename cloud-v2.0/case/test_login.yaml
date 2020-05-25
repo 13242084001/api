@@ -1,0 +1,54 @@
+---
+
+name: common file
+description: common file
+
+variables:
+  userId: "administrator"
+  password: "9DyrH0qty0SqrdsvVCjnJQ=="
+  url: "http://172.16.130.254:38080"
+
+stages:
+  - id: login_get_cookie
+    name: check correct login
+    request:
+      url: "{url}/login.do"
+      method: POST
+      verify: false
+      data:
+        userId: "{userId}"
+        password: "{password}"
+        userType: 0
+        loginType: 1
+    response:
+      status_code: 200
+      #json:
+      verify_response_with:
+        function: verify.verify:check_login_response_headers
+      save:
+        $ext:
+          function: utils.utils:save_cookie
+
+
+
+  - id: query_clusterUnload
+    name: 验证查询主存储可加载集群列表
+    request:
+      url: "{url}/primarystorage/queryClusterUnload.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        msid: "{msid}"
+        status: 0
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_clusterUnload_list_ok
+      save:
+        json:
+          main_storage_clusterIds: rows[0].clusterid

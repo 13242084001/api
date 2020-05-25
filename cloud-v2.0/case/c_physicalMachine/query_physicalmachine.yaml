@@ -1,0 +1,27 @@
+---
+name: 硬件设施-物理机-查询物理机列表
+description: ---
+
+stages:
+  - id: query_physicalmachine
+    name: 验证查询物理机列表
+    request:
+      url: "{url}/physicalmachine/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        keyword: ""
+        limit: 20
+        offset: 0
+        order: asc
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_physicalmachine_query_ok
+      save:
+        json:
+          pmname: rows[0].pmname
+        $ext:
+          function: utils.utils:save_hostid_str
