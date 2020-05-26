@@ -67,3 +67,8 @@ def save_mainStorage_msids(response):
     #print(json_list, "vvvvvvvvvvvvvvvvvvvvvvvvvvv")
     return Box({"msids": mainStorage.get("msid")})
 
+def save_l2network_inf(response):
+    info = response.json().get("rows")[0]
+    l2networkid = info.get("ltnid")
+    return Box({"l2networkid": l2networkid})
+

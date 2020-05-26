@@ -1,0 +1,29 @@
+---
+test_name: 2_硬件设施-镜像服务器-停用镜像服务器
+
+includes:
+  - !include ../test_login.yaml
+  - !include mirrorServer_query.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_mirrorServerList
+  - name: 停用镜像服务器
+    request:
+      url: "{url}/mirrorserver/disable.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        id: "{mirrorServerId}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+    delay_before: 1

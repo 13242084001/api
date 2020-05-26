@@ -1,0 +1,40 @@
+---
+test_name: 999_硬件设施-镜像服务器-添加镜像服务器
+
+includes:
+  - !include ../test_login.yaml
+  - !include ../a_zone/query_zone.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_zone_list
+  - name: 正常添加镜像服务器
+    request:
+      url: "{url}/mirrorserver/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        id: ""
+        logAction:
+          id: 2001
+          name: ""
+          async: 1
+        name: "mirror_server"
+        opt: "nolock"
+        remark: ""
+        type: "1"
+        url: "172.16.130.211:/share/leslie"
+        zoneId: "{ids}"
+        zoneName: "{zoneName}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+    delay_after: 8

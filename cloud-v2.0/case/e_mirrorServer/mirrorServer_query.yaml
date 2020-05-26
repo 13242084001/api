@@ -1,0 +1,24 @@
+---
+name: 查询镜像服务器列表
+description: ----
+
+stages:
+  - id: query_mirrorServerList
+    name: ---
+    request:
+      url: "{url}/mirrorserver/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          mirrorServerId: rows[0].id
+          mirrorSeverName: rows[0].name
