@@ -1,0 +1,35 @@
+---
+test_name: 3_硬件设施-集群管理-删除集群|cluster
+
+includes:
+  - !include ../test_login.yaml
+  - !include change_zone.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cluster
+  - name: 验证正常修改集群
+    request:
+      url: "{url}/cluster/delete.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #这里应传数组，多个id之间用逗号隔开
+        ids: "{clusterid}"
+        logAction:
+          async: 0
+          id: 1603
+          name: ""
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: null
+        id: "{tavern.request_vars.json.ids}"
+        resourceIds: null
+        error: null
+        async: 0

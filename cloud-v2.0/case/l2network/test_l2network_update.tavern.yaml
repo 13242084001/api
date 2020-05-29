@@ -1,0 +1,41 @@
+---
+test_name: 2_网络资源-二层网络-修改二层网络|l2network
+
+includes:
+  - !include ../test_login.yaml
+  - !include query_l2network.yaml
+
+strict:
+  - json:off
+
+marks:
+  - parametrize:
+      key:
+        - name
+        - remark
+      vals:
+        - [l3, 64738rheuhjfnjkdsnfjkdk]
+        - [fresh, "@!#%$$^&^*&*"]
+        - [unripe, pear]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_l2network_list
+  - name: 正常修改二层网络
+    request:
+      url: "{url}/l2network/update.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        id: "{l2networkid}"
+        logAction: {id: "5102", name: "", async: 0}
+        name: "{name}"
+        remark: "{remark}"
+    response:
+      status_code: 200
+      json:
+        code: 1

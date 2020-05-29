@@ -1,0 +1,23 @@
+---
+name: 查询云盘规则列表
+description: ----
+
+stages:
+  - id: query_cloudDiskSpec
+    name: ---
+    request:
+      url: "{url}/cloudDiskSpec/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          specid: rows[0].specid

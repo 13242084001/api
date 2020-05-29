@@ -1,0 +1,56 @@
+---
+test_name: 999_硬件设施-物理机-添加物理机（准备数据）|physicalMachine
+
+includes:
+  - !include ../test_login.yaml
+  - !include ../cluster/change_zone.yaml
+
+marks:
+  - parametrize:
+      key:
+        - pmname
+        - hostip
+      vals:
+        #- [vm.compute, 172.16.130.253]
+        - [vm.node1, 172.16.130.252]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cluster
+  - name: 验证正常添加物理机
+    request:
+      url: "{url}/physicalmachine/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        addType: 0
+        closeinteleptValue: 0
+        clusterid: "{clusterid}"
+        clustername: "{clustername}"
+        clustername1: ""
+        filename: ""
+        hostid: ""
+        hostip: "{hostip}"
+        logAction:
+          async: 1
+          id: 1701
+          name: "{pmname}"
+        loginid: root
+        loginpw: user@dev
+        pmname: "{pmname}"
+        remark: null
+        scaniommuValue: "1"
+        sshport: "22"
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: success
+        id: !anystr
+        resourceIds: null
+        error: null
+        async: 0

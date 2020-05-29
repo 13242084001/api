@@ -1,0 +1,52 @@
+---
+test_name: 1_云资源—计算规格|calculationSpecifications
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: --------
+    request:
+      url: "{url}/calculationSpecifications/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        allocatorstrategy: "1"
+        bandwidthtype: "1"
+        #cpu颗数
+        cpunum: "2"
+        diskbandwidthnum: "1000"
+        diskbandwidthunit: "MB/s"
+        logAction:
+          id: 1201
+          name: "8c16g"
+          async: 0
+        maxvmcount: ""
+        #内存大小
+        memorynum: "2"
+        memoryunit: "G"
+        #计算规则名称，可参数化
+        name: "8c16g"
+        networkoutbandwidthnum: "10"
+        networkoutbandwidthunit: "Mbps"
+        networkupbandwidthnum: "1000"
+        networkupbandwidthunit: "Kbps"
+        remark: ""
+        specid: ""
+        strategymodel: "1"
+        volumereadbandwidthnum: ""
+        volumereadbandwidthunit: "MB/s"
+        volumewritebandwidthnum: ""
+        volumewritebandwidthunit: "MB/s"
+    response:
+      status_code: 200
+      json:
+        code: 1
+

@@ -1,0 +1,42 @@
+---
+test_name: 1_云资源—云盘规格-添加云盘|cloudDiskSpec
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: --------
+    request:
+      url: "{url}/cloudDiskSpec/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #云盘容量
+        capacity: "10"
+        capacityUnit: "1"
+        diskbandwidth: "1000"
+        diskbandwidthUnit: "0"
+        diskbandwidthtype: "1"
+        logAction:
+          id: 1101
+          name: "云盘规格名称"
+          async: 0
+        #云盘名称
+        name: "rre"
+        readspeed: ""
+        readspeedUnit: "0"
+        remark: "lklkjl"
+        specid: ""
+        writespeed: ""
+        writespeedUnit: "0"
+    response:
+      status_code: 200
+      json:
+        code: 1

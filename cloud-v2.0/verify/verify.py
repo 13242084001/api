@@ -88,3 +88,9 @@ def check_query_clusterUnload_list_ok(response):
 # 校验主存储添加集群
 def check_mainStorage_addCluster_ok(response):
     assert response.json().get('code') == 1
+
+def check_cloudHost_add_ok(response):
+    body = response.json()
+    print(body)
+    assert body.get("code") == 1
+

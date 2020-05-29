@@ -1,0 +1,49 @@
+---
+test_name: 1_云资源—镜像-添加镜像|mirror
+
+includes:
+  - !include ../test_login.yaml
+  - !include ../mirrorServer/mirrorServer_query.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_mirrorServerList
+  - name: --------
+    request:
+      url: "{url}/mirror/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #云盘容量
+        biosmodel: "Legacy"
+        #镜像服务器名称
+        isoserver: "{mirrorSeverName}"
+        logAction:
+          id: 2101
+          #名字可以参数化
+          name: "centos7"
+          async: 1
+        mformat: "iso"
+        #mirrorid: "{mirrorid}"
+        #名字可以参数
+        mname: "centos7"
+        msid: "{mirrorServerId}"
+        mtype: "1"
+        operationType: 2101
+        #path: "{path}"
+        remark: "fsdfsdfdsf"
+        systemtype: "Linux"
+        #url: "{path}"
+        $ext:
+          function: utils.utils:upload_iso
+    response:
+      status_code: 200
+      json:
+        code: 1

@@ -1,0 +1,57 @@
+---
+test_name: 2_云资源-云盘规格-修改云盘规格|cloudDiskSpec
+
+includes:
+  - !include ../test_login.yaml
+  - !include test_cloudDiskSpec_query.yaml
+
+marks:
+  - parametrize:
+      key:
+        - capacity
+        - name
+        - diskbandwidth
+      vals:
+        - [10, ddsffv$#$#@$, 999]
+        - [20, 陈得紧紧的, 800]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cloudDiskSpec
+  - name: 验证正常修改云盘规则
+    request:
+      url: "{url}/cloudDiskSpec/update.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #云盘容量，可参数化
+        capacity: "{capacity}"
+        capacityUnit: "1"
+        diskbandwidth: "{diskbandwidth}"
+        diskbandwidthUnit: "0"
+        diskbandwidthtype: "1"
+        logAction:
+          id: 1102
+          name: "云盘规格名称"
+          async: 0
+        #
+        name: "{name}"
+        readspeed: ""
+        readspeedUnit: "0"
+        remark: "lklkjl"
+        specid: "{specid}"
+        writespeed: ""
+        writespeedUnit: "0"
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: null
+        id: "{tavern.request_vars.json.specid}"
+        resourceIds: null
+        error: null
+        async: 0

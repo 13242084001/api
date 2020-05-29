@@ -8,6 +8,7 @@ variables:
   password: "9DyrH0qty0SqrdsvVCjnJQ=="
   url: "http://172.16.130.254:38080"
 
+
 stages:
   - id: login_get_cookie
     name: check correct login

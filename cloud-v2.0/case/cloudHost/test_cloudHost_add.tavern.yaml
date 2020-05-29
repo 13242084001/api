@@ -1,0 +1,71 @@
+---
+test_name: 1_云资源—云主机-添加云主机|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+  - !include ../calculationSpecifications/test_calculationSpecificationsList.yaml
+  - !include query_cloudMirrorList.yaml
+  - !include ../cloudDiskSpec/test_cloudDiskSpec_query.yaml
+  - !include cloudHost_queryNetwork.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_calculationSpecifications
+  - type: ref
+    id: query_cloudMirrorList
+  - type: ref
+    id: query_cloudDiskSpec
+  - type: ref
+    id: query_L3network
+  - name: --------
+    request:
+      url: "{url}/cloudHost/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        allocatorstrategy: "1"
+        cdrom: ""
+        cdrom1: ""
+        cdrom2: ""
+        #集群id
+        clusterids: "{clusterids}"
+        createtype: ""
+        datadiskspecid: []
+        datadiskspecname: ""
+        datamsname: ""
+        hostname: ""
+        #
+        ips: "{l3networkid}:"
+        logAction:
+          id: 1001
+          name: "云主机名称"
+          async: 1
+        mformat: "iso"
+        #镜像id
+        mirrorid: "{mirrorid}"
+        #云主机名称
+        name: "eeee"
+        network: ""
+        #L3网络
+        networkids: "{l3networkid}"
+        #指定ip
+        number: "4"
+        operationType: 1001
+        pnname: ""
+        remark: "hhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+        #云盘规格id
+        rootdiskspecid: "{specid}"
+        #云盘规格名称
+        #计算规格id
+        specid: "{calcid}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_cloudHost_add_ok

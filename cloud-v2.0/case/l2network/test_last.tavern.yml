@@ -1,0 +1,43 @@
+---
+test_name: 999_网络资源-二层网络-添加二层网络(准备数据)|l2network
+
+includes:
+  - !include ../test_login.yaml
+  - !include ../cluster/change_zone.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cluster
+  - name: 正常添加二层网络
+    request:
+      url: "{url}/l2network/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cluster: "{clustername}"
+        clusterId: "{clusterid}"
+        logAction:
+          id: "5101"
+          name: ""
+          async: 1
+        name: "L2"
+        networkCard: "eth2"
+        remark: ""
+        type: 1
+        vlanId: ""
+        vni: ""
+        vxlanPoolId: ""
+        vxlanpool: ""
+    response:
+      status_code: 200
+      json:
+        code: 1
+
+    delay_after: 10

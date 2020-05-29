@@ -1,0 +1,24 @@
+---
+name: 查询计算规格列表|calculationSpecifications
+description: ----
+
+stages:
+  - id: query_calculationSpecifications
+    name: ---
+    request:
+      url: "{url}/calculationSpecifications/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        networktype: 2
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:save_calculationSpecifications_inf

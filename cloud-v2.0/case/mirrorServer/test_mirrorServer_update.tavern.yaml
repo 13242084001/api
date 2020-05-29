@@ -1,0 +1,41 @@
+---
+test_name: 4_硬件设施-镜像服务器-修改镜像服务器|mirrorServer
+
+includes:
+  - !include ../test_login.yaml
+  - !include mirrorServer_query.yaml
+
+strict:
+  - json:off
+
+marks:
+  - parametrize:
+      key:
+        - name
+        - remark
+      vals:
+        - [l3, 64738rheuhjfnjkdsnfjkdk]
+        - [fresh, "@!#%$$^&^*&*"]
+        - [unripe, pear]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_mirrorServerList
+  - name: 修改镜像服务器
+    request:
+      url: "{url}/mirrorserver/update.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        id: "{mirrorServerId}"
+        name: "{name}"
+        remark: "{remark}"
+        zoneId: ""
+    response:
+      status_code: 200
+      json:
+        code: 1

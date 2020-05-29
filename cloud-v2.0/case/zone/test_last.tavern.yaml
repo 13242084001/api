@@ -1,0 +1,29 @@
+---
+test_name: 999_硬件设施-区域管理-添加区域(为下次业务准备数据)|zone
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 验证正常添加区域功能
+    request:
+      url: "{url}/zone/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        domainname: "apitest区域"
+        domainid: ""
+        remark: ""
+        logAction:
+          id: "1501"
+          name: ""
+          async: 0
+
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_add_zone

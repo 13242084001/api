@@ -1,0 +1,80 @@
+---
+test_name: 4_硬件设施-主存储-删除主存储|main_storage
+
+includes:
+  - !include ../test_login.yaml
+  - !include mainStorage_query.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_mainStorage
+  - name: 验证删除主存储
+    request:
+      url: "{url}/primarystorage/delete.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        clusterId: "空字段"
+        id: "{msids}"
+        logAction:
+          async: 1
+          id: 1803
+          name: ""
+    response:
+      status_code: 200
+      json:
+        async: 1
+        code: 1
+        error: null
+        id: "{msids}"
+        msg: null
+        resourceIds: null
+    delay_after: 10
+
+
+---
+test_name: 5_硬件设施-主存储-删除主存储|main_storage
+
+includes:
+  - !include ../test_login.yaml
+  - !include mainStorage_query.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_mainStorage
+  - name: 验证删除主存储
+    request:
+      url: "{url}/primarystorage/delete.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        clusterId: "空字段"
+        id: "{msids}"
+        logAction:
+          async: 1
+          id: 1803
+          name: ""
+    response:
+      status_code: 200
+      json:
+        async: 1
+        code: 1
+        error: null
+        id: "{msids}"
+        msg: null
+        resourceIds: null
+    delay_after: 10

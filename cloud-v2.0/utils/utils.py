@@ -1,6 +1,7 @@
 #!/usr/bin/python3.6
 #
 from box import Box
+from common.uploadMirror import start_upload
 
 def test_function(response):
     print(response)
@@ -70,5 +71,17 @@ def save_mainStorage_msids(response):
 def save_l2network_inf(response):
     info = response.json().get("rows")[0]
     l2networkid = info.get("ltnid")
-    return Box({"l2networkid": l2networkid})
+    l2networkname = info.get("ltnname")
+    return Box({"l2networkid": l2networkid, "l2networkname": l2networkname})
+
+def save_calculationSpecifications_inf(response):
+    info = response.json().get("rows")[0]
+    specid = info.get("specid")
+    name = info.get("name")
+    return Box({"calcid": specid, "name": name})
+
+def upload_iso():
+    body = start_upload()
+    return Box({"path": body.get("message"), "url": body.get("message"), "mirrorid": body.get("fileId")})
+
 

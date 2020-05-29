@@ -1,0 +1,26 @@
+---
+name: 查询镜像列表
+description: ----
+
+stages:
+  - id: query_cloudMirrorList
+    name: ---
+    request:
+      url: "{url}/cloudHost/queryMirror.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        status: 1
+        mtype: 1
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          mirrorid: rows[0].mirrorid
+          msid: rows[0].msid

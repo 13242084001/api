@@ -1,0 +1,27 @@
+---
+name: 查询三层网络列表
+description: ----
+
+stages:
+  - id: query_L3network
+    name: ---
+    request:
+      url: "{url}/cloudHost/queryNetwork.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        status: 0
+        keyword: null
+        clusterid: null
+        networkids: null
+    response:
+      status_code: 200
+      save:
+        json:
+          l3networkid: rows[0].nid
+          clusterids: rows[0].clusterids[0]

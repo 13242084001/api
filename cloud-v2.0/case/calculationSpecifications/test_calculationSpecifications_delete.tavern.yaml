@@ -1,0 +1,32 @@
+---
+test_name: 3_云资源—计算规格-删除计算规格|calculationSpecifications
+
+includes:
+  - !include ../test_login.yaml
+  - !include test_calculationSpecificationsList.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_calculationSpecifications
+  - name: --------
+    request:
+      url: "{url}/calculationSpecifications/remove.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        ids: "{calcid}"
+        logAction:
+          id: 1203
+          name: "{name}"
+          async: 0
+    response:
+      status_code: 200
+      json:
+        code: 1
