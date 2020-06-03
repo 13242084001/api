@@ -1,0 +1,226 @@
+---
+test_name: B_云资源—云主机-重启云主机|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: --------
+    request:
+      url: "{url}/cloudHost/restartVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        $ext:
+          function: utils.utils:get_running_qcow2_vm
+        logAction:
+          id: 1004
+          name: "云主机名称"
+          async: 1
+        operationType: 1004
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_reboot_vm_ok
+
+
+---
+test_name: C_云资源—云主机-暂停云主机|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: --------
+    request:
+      url: "{url}/cloudHost/pauseVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        $ext:
+          function: utils.utils:get_running_qcow2_vm
+        logAction:
+          id: 1006
+          name: "云主机名称"
+          async: 1
+        operationType: 1006
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_pause_vm_ok
+
+---
+test_name: D_云资源—云主机-打开控制台|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取uuid即token
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 打开控制台
+    request:
+      url: "http://172.16.130.254:15900/vnc_lite.html?path=?token={console_token}"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+    response:
+      status_code: 200
+
+---
+test_name: E_云资源—云主机-关闭电源|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取uuid即token
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 关闭电源
+    request:
+      url: "{url}/cloudHost/forceStopVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #console_token也就是vmid
+        ids: "{console_token}"
+        logAction:
+          id: 1007
+          name: "云主机名称"
+          async: 1
+        operationType: 1007
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: ""
+        id: "{console_token}"
+        resourceIds: null
+        error: null
+        async: 1
+      verify_response_with:
+        function: verify.verify:check_forceStopVM_ok
+
+---
+test_name: F_云资源—云主机-启动停止的云主机|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取uuid即token
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+          extra_kwargs:
+            state: stopped
+
+  - name: 启动云主机
+    request:
+      url: "{url}/cloudHost/startVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #console_token也就是vmid
+        ids: "{console_token}"
+        logAction:
+          id: 1002
+          name: "云主机名称"
+          async: 1
+        operationType: 1002
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: ""
+        id: "{console_token}"
+        resourceIds: null
+        error: null
+        async: 1
+      verify_response_with:
+        function: verify.verify:check_startVM_ok

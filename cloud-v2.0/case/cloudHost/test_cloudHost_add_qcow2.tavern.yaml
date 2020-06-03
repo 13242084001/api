@@ -1,11 +1,11 @@
 ---
-test_name: 1_云资源—云主机-添加云主机|cloudHost
+test_name: 2_云资源—云主机-添加云主机_qcow2|cloudHost
 
 includes:
   - !include ../test_login.yaml
   - !include ../calculationSpecifications/test_calculationSpecificationsList.yaml
   - !include query_cloudMirrorList.yaml
-  - !include ../cloudDiskSpec/test_cloudDiskSpec_query.yaml
+  #- !include ../cloudDiskSpec/test_cloudDiskSpec_query.yaml
   - !include cloudHost_queryNetwork.yaml
 
 strict:
@@ -18,8 +18,8 @@ stages:
     id: query_calculationSpecifications
   - type: ref
     id: query_cloudMirrorList
-  - type: ref
-    id: query_cloudDiskSpec
+  #- type: ref
+  #  id: query_cloudDiskSpec
   - type: ref
     id: query_L3network
   - name: --------
@@ -47,21 +47,21 @@ stages:
           id: 1001
           name: "云主机名称"
           async: 1
-        mformat: "iso"
+        mformat: "qcow2"
         #镜像id
-        mirrorid: "{mirrorid}"
+        mirrorid: "{qcow2_mirrorid}"
         #云主机名称
-        name: "eeee"
+        name: "qcow2test1"
         network: ""
         #L3网络
         networkids: "{l3networkid}"
         #指定ip
-        number: "4"
+        number: "1"
         operationType: 1001
         pnname: ""
-        remark: "hhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+        remark: "qcow2 test"
         #云盘规格id
-        rootdiskspecid: "{specid}"
+        #rootdiskspecid: "{specid}"
         #云盘规格名称
         #计算规格id
         specid: "{calcid}"

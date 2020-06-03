@@ -1,0 +1,244 @@
+---
+test_name: 3_云资源-云主机-查询云主机(默认查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:save_cloudHost_list
+
+---
+test_name: 4_云资源-云主机-查询云主机(running状态查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: running
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_status_ok
+        extra_kwargs:
+          state: running
+
+
+---
+test_name: 5_云资源-云主机-查询云主机(starting状态查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: stopped
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_status_ok
+        extra_kwargs:
+          state: stopped
+
+
+---
+test_name: 6_云资源-云主机-查询云主机(paused状态查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: paused
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_status_ok
+        extra_kwargs:
+          state: paused
+
+
+---
+test_name: 7_云资源-云主机-查询云主机(stopping状态查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: stopping
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_status_ok
+        extra_kwargs:
+          state: stopping
+
+
+---
+test_name: 8_云资源-云主机-查询云主机(根据名称匹配查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: q
+        state: null
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_ok
+        extra_kwargs:
+          searchtype: 0
+          keyword: q
+
+
+---
+test_name: 9_云资源-云主机-查询云主机(根据物理机ip地址查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 2
+        keyword: 172
+        state: null
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_ok
+        extra_kwargs:
+          searchtype: !int 2
+          keyword: !!str 172
+
+---
+test_name: A_云资源-云主机-查询云主机(根据云主机ip地址查询)|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 1
+        keyword: 192
+        state: null
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_query_vm_ip_ok
+        extra_kwargs:
+          keyword: !!str 192

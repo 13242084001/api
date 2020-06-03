@@ -2,6 +2,8 @@
 #
 from box import Box
 from common.uploadMirror import start_upload
+from verify import gol
+
 
 def test_function(response):
     print(response)
@@ -84,4 +86,36 @@ def upload_iso():
     body = start_upload()
     return Box({"path": body.get("message"), "url": body.get("message"), "mirrorid": body.get("fileId")})
 
+def save_mirror_inf(response):
+    rows = response.json().get("rows")
+    inf_dict = {}
+    for i in rows:
+        if i.get("mformat") == "iso":
+            if not inf_dict.get("iso_mirrorid"):
+                inf_dict["iso_mirrorid"] = i.get("mirrorid")
+                #inf_dict["iso_msid"] = i.get("msid")
+        elif i.get("mformat") == "qcow2":
+            if not inf_dict.get("qcow2_mirrorid"):
+                inf_dict["qcow2_mirrorid"] = i.get("mirrorid")
+                #inf_dict["qcow2_msid"] = i.get("msid")
+    return Box(inf_dict)
+
+def save_cloudHost_list(response):
+    rows = response.json().get("rows")
+    gol.set_value("rows", rows)
+
+
+def get_running_qcow2_vm():
+    rows = gol.get_value("rows")
+    print(rows)
+    for row in rows:
+        if row.get("mformat") == "qcow2" and row.get("state") == "running":
+            print(row.get("vmid"))
+            return Box({"ids": row.get("vmid")})
+
+def get_console_token(response, state="running"):
+    rows = response.json().get("rows")
+    for row in rows:
+        if row.get("state") == state:
+            return Box({"console_token": row.get("vmid")})
 

@@ -21,6 +21,5 @@ stages:
     response:
       status_code: 200
       save:
-        json:
-          mirrorid: rows[0].mirrorid
-          msid: rows[0].msid
+        $ext:
+          function: utils.utils:save_mirror_inf
