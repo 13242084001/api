@@ -3,6 +3,8 @@
 from box import Box
 from common.uploadMirror import start_upload
 from verify import gol
+import sys
+sys.setrecursionlimit(10000000)
 
 
 def test_function(response):
@@ -113,9 +115,79 @@ def get_running_qcow2_vm():
             print(row.get("vmid"))
             return Box({"ids": row.get("vmid")})
 
+
 def get_console_token(response, state="running"):
     rows = response.json().get("rows")
     for row in rows:
         if row.get("state") == state:
-            return Box({"console_token": row.get("vmid")})
+            console_token = row.get("vmid")
+            cpunum_add = int(row.get("cpunum") + 2)
+            cpunum_cut = int(row.get("cpunum") - 1)
+            memorysize = int(row.get("memorysize")/(1024*1024*1024))
+            maxmemorysize = int(row.get("maxmemorysize")/1024)
+            print(memorysize, maxmemorysize)
+            if memorysize < maxmemorysize:
+                memorysize_modify = memorysize + 1
+            else:
+                memorysize_modify = memorysize - 1
+            memorysize_modify_overflow = maxmemorysize + 1
+            return Box({"console_token": console_token, "cpunum_add": cpunum_add, "cpunum_cut": cpunum_cut,
+                        "memorysize_modify": memorysize_modify, "memorysize_modify_overflow": memorysize_modify_overflow})
 
+def query_use_or_unuse_cloudDisk(response, use=False):
+    rows = response.json().get("rows")
+    if use:
+        for row in rows:
+            if row.get("vmid"):
+                return Box({"volumeid": row.get("volumeid"), "vmid": row.get("vmid"), "volname": row.get("name")})
+    else:
+        for row in rows:
+            if not row.get("vmid"):
+                return Box({"volumeid": row.get("volumeid"), "hostid": row.get("hostid"), "volname": row.get("name")})
+
+def save_active_ImageServer(response):
+    rows = response.json().get("rows")
+    for row in rows:
+        if row.get("state") == 1:
+            return Box({"mirrorid": row.get("msid")})
+
+def choice_no_vm_disk(response, flag=1):
+    rows = response.json().get("rows")
+    if flag:
+        for row in rows:
+            if not row.get("vmid"):
+                return Box({"volid": row.get("volumeid"), "size": int(row.get("size"))/(1024*1024*1024) + 10,
+                            "pmid": row.get("hostid"), "installpath": row.get("installpath"),
+                            "pmip": row.get("hostip"), "msid": row.get("msid")})
+    else:
+        for row in rows:
+            if row.get("vmid"):
+                return Box({"volid": row.get("volumeid"), "vmid": row.get("vmid")})
+
+
+def get_not_ha_vm(response, level=1):
+    rows = response.json().get("rows")
+    for row in rows:
+        if int(row.get("vmlevel")) == level:
+            return Box({"vmid": row.get("vmid")})
+
+
+def choice_mirrorSever(response):
+    rows = response.json().get("rows")
+    for row in rows:
+        if 1 == row.get("state"):
+            return Box({"mirrorid": row.get("msid")})
+
+
+def choice_iso_mirror(response):
+    rows = response.json().get("rows")
+    for row in rows:
+        if row.get("mformat") == "iso" and row.get("status") == 1:
+            return Box({"mirrorid": row.get("mirrorid")})
+
+
+def get_stopped_and_qcow2_vm(response):
+    rows = response.json().get("rows")
+    for row in rows:
+        if row.get("state") == "stopped" and row.get("mformat") == "qcow2":
+            return Box({"vmid": row.get("vmid")})

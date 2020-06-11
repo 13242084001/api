@@ -1,0 +1,61 @@
+---
+test_name: 6_云资源—云盘-卸载|cloudDisk
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/cloudDisk/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchitem: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:query_use_or_unuse_cloudDisk
+          extra_kwargs:
+            #标志参数，表示use或者unuse，1表示use
+            use: 1
+
+
+  - name: ----
+    request:
+      url: "{url}/cloudDisk/unload.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      data:
+        volumeid: "{volumeid}"
+        vmid: "{vmid}"
+        logAction[id]: 1907
+        logAction[name]: "{volname}"
+        logAction[async]: 1
+        operationType: 1907
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudDiskLoad_or_unload_ok
+        extra_kwargs:
+          vmid: "{vmid}"
+          volumeid: "{volumeid}"
+          #标志参数，标示load或者unload，0表示unload
+          typee: 0

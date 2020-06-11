@@ -1,0 +1,60 @@
+---
+test_name: 8_云资源—云盘-创建云盘镜像-创建云盘镜像|cloudDisk
+
+includes:
+  - !include ../test_login.yaml
+  - !include query_cloudDisk.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cloudDisk
+  - name: ----
+    request:
+      url: "{url}/cloudDisk/queryImageserver.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+    save:
+      $ext:
+        function: utils.utils:save_active_ImageServer
+
+  - name: ----
+    request:
+      url: "{url}/cloudDisk/addVolumeMirror.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #imageservername: "mirror_server"
+        logAction:
+          id: 1909
+          name: "cloudDisk"
+          async: 1
+        mname: "fdf"
+        msid: "{mirrorid}"
+        operationType: 1909
+        remark: "；‘’‘’；；"
+        volumeid: "{volid}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudDisk_add_ok
+        template: 1

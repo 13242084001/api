@@ -1,0 +1,80 @@
+---
+test_name: O_云资源—云主机-创建云主机镜像|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+
+  - name: 选择镜像服务器
+    request:
+      url: "{url}/cloudHost/queryImageserver.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        $ext:
+          function: utils.utils:choice_mirrorSever
+
+  - name: 创建云主机镜像
+    request:
+      url: "{url}/cloudHost/createVmImage.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #imageservername: "mirror_server"
+        logAction:
+          id: 1013
+          name: "bvnnbnbvn-1"
+          async: 1
+        #mname: "testVMimage"
+        msid: "{mirrorid}"
+        mtype: "1"
+        name: "testVMimage"
+        operationType: 1013
+        remark: ""
+        systemtype: "1"
+        vmid: "{console_token}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: veriry.verify:check_makeVMimage_ok

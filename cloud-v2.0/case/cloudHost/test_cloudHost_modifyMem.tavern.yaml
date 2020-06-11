@@ -1,0 +1,153 @@
+---
+test_name: R_云资源—云主机-running状态在最大可用内存范围内修改内存|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 修改内存
+    request:
+      url: "{url}/cloudHost/resizeRAM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      data:
+        vmid: "{console_token}"
+        memorysize: "{memorysize_modify}"
+        memorysizeunit: GB
+        operationType: 1030
+        logAction[id]: 1030
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_modify_mem_ok
+        extra_kwargs:
+          memorysize: !int "{memorysize_modify}"
+    #delay_after: 1
+
+---
+test_name: S_云资源—云主机-running状态超过最大内存可用访问修改内存，失败|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 修改内存
+    request:
+      url: "{url}/cloudHost/validateMemorySize.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        vmid: "{console_token}"
+        memorysize: "{memorysize_modify_overflow}"
+        sizeunit: GB
+        size: "{memorysize_modify_overflow}"
+    response:
+      status_code: 200
+      json: false
+
+
+---
+test_name: T_云资源—云主机-stopped状态超过最大内存可用访问修改内存，成功|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+          extra_kwargs:
+            state: stopped
+
+  - name: 修改内存
+    request:
+      url: "{url}/cloudHost/validateMemorySize.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        vmid: "{console_token}"
+        memorysize: "{memorysize_modify_overflow}"
+        sizeunit: GB
+        size: "{memorysize_modify_overflow}"
+    response:
+      status_code: 200
+      json: true

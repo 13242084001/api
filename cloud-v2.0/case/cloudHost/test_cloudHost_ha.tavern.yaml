@@ -1,0 +1,115 @@
+---
+test_name: J_云资源—云主机-云主机高可用|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_not_ha_vm
+
+
+  - name: 设置高可用
+      request:
+        url: "{url}/cloudHost/setHA.do"
+        method: POST
+        verify: false
+        headers:
+          Cookie: "{cookie}"
+        json:
+          vmid: "{vmid}"
+          vmlevel: 2
+          operationType: 1019
+          logAction[id]: 1019
+          logAction[name]: 云主机名称
+          logAction[async]: 1
+      response:
+        status_code: 200
+        json:
+          code: 1
+        verify_response_with:
+          function: verify.verify:check_cloudHost_setHa_ok
+          extra_kwargs:
+            vmid: "{vmid}"
+
+
+---
+test_name: K_云资源—云主机-云主机高可用|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_not_ha_vm
+          level: 2
+
+
+  - name: 设置高可用
+    request:
+      url: "{url}/cloudHost/setHA.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        vmid: "{vmid}"
+        vmlevel: 1
+        operationType: 1019
+        logAction[id]: 1019
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudHost_setHa_ok
+        extra_kwargs:
+          vmid: "{vmid}"
+          cancle: 1
+

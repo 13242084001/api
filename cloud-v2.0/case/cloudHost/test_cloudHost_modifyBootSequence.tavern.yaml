@@ -1,0 +1,118 @@
+---
+test_name: V_云资源—云主机-修改启动顺序-硬盘->光盘|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+          extra_kwargs:
+            state: stopped
+
+
+  - name: 修改启动顺序
+    request:
+      url: "{url}/cdRom/changeBoot.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        bootorder: 1
+        operationType: 1021
+        logAction[id]: 1021
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+        vmid: "{console_token}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_changeBootSequence_ok
+        extra_kwargs:
+          vmid: "{console_token}"
+          bootSeq: 1
+
+
+---
+test_name: W_云资源—云主机-修改启动顺序-光盘->硬盘|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+          extra_kwargs:
+            state: stopped
+
+
+  - name: 修改启动顺序
+    request:
+      url: "{url}/cdRom/changeBoot.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        bootorder: 2
+        operationType: 1021
+        logAction[id]: 1021
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+        vmid: "{console_token}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_changeBootSequence_ok
+        extra_kwargs:
+          vmid: "{console_token}"
+          bootSeq: 2

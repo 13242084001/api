@@ -1,0 +1,116 @@
+---
+test_name: 1_云资源—云盘-添加云盘(按云盘规格)|cloudDisk
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询启用的云盘规格
+    request:
+      url: "{url}/cloudDiskSpec/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        state: 1
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          specid: rows[0].specid
+          capacity: rows[0].capacity
+
+  - name: 查询启用的主存储
+    request:
+      url: "{url}/cloudDisk/queryMainStorage.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          msid: rows[0].msid
+
+
+  - name: 查询启用的物理机
+    request:
+      url: "{url}/physicalmachine/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        state: 1
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          hostid: rows[0].hostid
+
+
+  - name: 添加云盘
+    request:
+      url: "{url}/cloudDisk/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        createtype: "0"
+        format: ""
+        #hostName: "vm.node1"
+        hostid: "{hostid}"
+        imagemsname: ""
+        imagename: ""
+        imagevmname: ""
+        logAction:
+          id: 1901
+          name: "cloudDisk"
+          async: 1
+        msid: "{msid}"
+        mstype: "1"
+        name: "cloudDisk"
+        operationType: 1901
+        remark: "dsds"
+        rootimageid: ""
+        size: "{capacity}"
+        specid: "{specid}"
+        #specmsname: "main_storage1"
+        #specname: "rre"
+        specvmname: ""
+        virtioscsiValue: "1"
+        vmid: ""
+        volumeid: ""
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudDisk_add_ok

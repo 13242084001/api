@@ -1,0 +1,44 @@
+---
+test_name: 2_云资源—云盘-修改云盘|cloudDisk
+
+includes:
+  - !include ../test_login.yaml
+  - !include query_cloudDisk.yaml
+
+strict:
+  - json:off
+
+marks:
+  - parametrize:
+      key:
+        - name
+        - remark
+      vals:
+        - [edfdsfdfdfdfdfdffsdfdfdfdf, fcdsvdvvdfvdfvfdvfdvfdvfdv]
+        - [fresh, ""]
+        - [dfsfdsfdsfsdfdsfdf, <p>djsdhjsd</p><p>我的</p>]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cloudDisk
+  - name: 修改云盘
+    request:
+      url: "{url}/cloudDisk/update.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: 1902
+          name: "{name}"
+          async: 0
+        name: "{name}"
+        remark: "{remark}"
+        volumeid: "{volid}"
+    response:
+      status_code: 200
+      json:
+        code: 1

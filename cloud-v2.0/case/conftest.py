@@ -3,7 +3,7 @@ import pytest
 def pytest_collection_modifyitems(config, items):
     asc_list = ["zone", "cluster", "physicalMachine", "main_storage",
                 "mirrorServer", "l2network", "l3network",
-                "calculationSpecifications", "cloudDiskSpec", "mirror"]
+                "calculationSpecifications", "cloudDiskSpec", "mirror", "cloudDisk", "cloudHost"]
     import functools
     def cmp(a, b):
         a_flag_1 = a.name.split("|")[1].split("[")[0]

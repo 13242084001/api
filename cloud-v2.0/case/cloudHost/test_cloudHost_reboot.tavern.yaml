@@ -61,7 +61,9 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: verify.verify:check_pause_vm_ok
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: paused
 
 ---
 test_name: D_云资源—云主机-打开控制台|cloudHost
@@ -162,7 +164,9 @@ stages:
         error: null
         async: 1
       verify_response_with:
-        function: verify.verify:check_forceStopVM_ok
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: shut
 
 ---
 test_name: F_云资源—云主机-启动停止的云主机|cloudHost
@@ -223,4 +227,98 @@ stages:
         error: null
         async: 1
       verify_response_with:
-        function: verify.verify:check_startVM_ok
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: running
+
+---
+test_name: G_云资源—云主机-单个停用云主机|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取uuid即token
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 停用云主机
+    request:
+      url: "{url}/cloudHost/stopVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #console_token也就是vmid
+        ids: "{console_token}"
+        logAction:
+          id: 1003
+          name: "云主机名称"
+          async: 1
+        operationType: 1003
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: ""
+        id: "{console_token}"
+        resourceIds: null
+        error: null
+        async: 1
+      verify_response_with:
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: shut
+
+  - name: 启动云主机
+    request:
+      url: "{url}/cloudHost/startVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #console_token也就是vmid
+        ids: "{console_token}"
+        logAction:
+          id: 1002
+          name: "云主机名称"
+          async: 1
+        operationType: 1002
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: ""
+        id: "{console_token}"
+        resourceIds: null
+        error: null
+        async: 1
+      verify_response_with:
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: running
+
+

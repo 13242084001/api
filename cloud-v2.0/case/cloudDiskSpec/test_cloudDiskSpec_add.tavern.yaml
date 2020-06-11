@@ -1,5 +1,5 @@
 ---
-test_name: 1_云资源—云盘规格-添加云盘|cloudDiskSpec
+test_name: 1_云资源—云盘规格-添加云盘规格|cloudDiskSpec
 
 includes:
   - !include ../test_login.yaml

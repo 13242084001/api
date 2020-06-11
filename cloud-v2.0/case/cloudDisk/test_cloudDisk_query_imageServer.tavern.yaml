@@ -1,0 +1,30 @@
+---
+test_name: 7_云资源—云盘-创建云盘镜像-查询镜像服务器|cloudDisk
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ----
+    request:
+      url: "{url}/cloudDisk/queryImageserver.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudDisk_queryImageserver_ok

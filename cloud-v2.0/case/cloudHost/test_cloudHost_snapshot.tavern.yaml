@@ -1,0 +1,212 @@
+---
+test_name: L_云资源—云主机-running状态设置云主机快照|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+
+  - name: 设置云主机快照
+    request:
+      url: "{url}/cloudHost/createSnapshot.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: 1917
+          name: "bvnnbnbvn-1"
+          async: 1
+        name: "snap1"
+        operationType: 1917
+        remark: ""
+        vmid: "{console_token}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudHost_makeSnapshot_ok
+        extra_kwargs:
+          vmid: "{console_token}"
+
+
+---
+test_name: M_云资源—云主机-stopped状态设置云主机快照|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 停用云主机
+    request:
+      url: "{url}/cloudHost/stopVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #console_token也就是vmid
+        ids: "{console_token}"
+        logAction:
+          id: 1003
+          name: "云主机名称"
+          async: 1
+        operationType: 1003
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: ""
+        id: "{console_token}"
+        resourceIds: null
+        error: null
+        async: 1
+      verify_response_with:
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: shut
+
+
+  - name: 设置云主机快照
+      request:
+        url: "{url}/cloudHost/createSnapshot.do"
+        method: POST
+        verify: false
+        headers:
+          Cookie: "{cookie}"
+        json:
+          logAction:
+            id: 1917
+            name: "bvnnbnbvn-1"
+            async: 1
+          name: "snap1"
+          operationType: 1917
+          remark: ""
+          vmid: "{console_token}"
+      response:
+        status_code: 200
+        json:
+          code: 1
+        verify_response_with:
+          function: verify.verify:check_cloudHost_makeSnapshot_ok
+          extra_kwargs:
+            vmid: "{console_token}"
+
+
+---
+test_name: N_云资源—云主机-stopped恢复云主机快照|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ----
+    request:
+      url: "{url}/cloudHost/querySnapshotByVmid.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        vmid: "{console_token}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          snapshotid: [0].snapshotid
+          volumeid: [0].volumeid
+          snapname: [0].name
+
+  - name: 恢复云主机快照
+    request:
+      url: "{url}/cloudHost/resumeVolumesnapshot.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      data:
+        snapshotid: "{snapshotid}"
+        volumeid: "{volumeid}"
+        vmid: "{console_token}"
+        operationType: 1919
+        logAction[id]: 1919
+        logAction[name]: "{snapname}"
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+        id: "{snapshotid}"
+      #verify_response_with:
+        #function: verify.verify:check_cloudHost_resumeSnapshot_ok
+        #extra_kwargs:
+        #  vmid: "{console_token}"
+
+  - name: 启动云主机
+    request:
+      url: "{url}/cloudHost/startVM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        #console_token也就是vmid
+        ids: "{console_token}"
+        logAction:
+          id: 1002
+          name: "云主机名称"
+          async: 1
+        operationType: 1002
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: ""
+        id: "{console_token}"
+        resourceIds: null
+        error: null
+        async: 1
+      verify_response_with:
+        function: verify.verify:check_pause_forceStop_stop_ok
+        extra_kwargs:
+          action: running

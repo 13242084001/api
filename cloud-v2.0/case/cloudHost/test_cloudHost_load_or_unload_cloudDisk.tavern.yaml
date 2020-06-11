@@ -1,0 +1,146 @@
+---
+test_name: H_云资源—云主机-加载云盘|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 查询可加载的云盘
+    request:
+      url: "{url}/cloudHost/queryDisks.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        order: asc
+        offset: 0
+        limit: 5
+        vmid: "{console_token}"
+        type: 1
+        status: 0
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_query_cloudHost_loadable_or_unloadable_disk_ok
+        extra_kwargs:
+          vmid: "{console_token}"
+      save:
+        json:
+          volid: rows[0].volumeid
+
+  - name: 加载云盘
+      request:
+        url: "{url}/cloudHost/loadDisk.do"
+        method: POST
+        verify: false
+        headers:
+          Cookie: "{cookie}"
+        json:
+          vmid: "{console_token}"
+          volumeid: "{volid}"
+          operationType: 1017
+          logAction[id]: 1017
+          logAction[name]: 云主机名称
+          logAction[async]: 1
+      response:
+        status_code: 200
+        json:
+          code: 1
+        verify_response_with:
+          function: verify.verify:check_cloudDiskLoad_or_unload_ok
+          extra_kwargs:
+            vmid: "{console_token}"
+            volumeid: "{volid}"
+
+
+---
+test_name: I_云资源—云主机-卸载云盘|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 选择要卸载的云盘
+    request:
+      url: "{url}/cloudHost/queryDisks.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        order: asc
+        offset: 0
+        limit: 5
+        vmid: "{console_token}"
+        type: 2
+        status: 0
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_query_cloudHost_loadable_or_unloadable_disk_ok
+        extra_kwargs:
+          load: 0
+          vmid: "{console_token}"
+      save:
+        json:
+          volid: rows[0].volumeid
+
+  - name: 卸载云盘
+      request:
+        url: "{url}/cloudHost/unloadDisk.do"
+        method: POST
+        verify: false
+        headers:
+          Cookie: "{cookie}"
+        json:
+          vmid: "{console_token}"
+          volumeid: "{volid}"
+          operationType: 1018
+          logAction[id]: 1018
+          logAction[name]: 云主机名称
+          logAction[async]: 1
+      response:
+        status_code: 200
+        json:
+          code: 1
+        verify_response_with:
+          function: verify.verify:check_cloudDiskLoad_or_unload_ok
+          extra_kwargs:
+            vmid: "{console_token}"
+            volumeid: "{volid}"
+            typee: 0

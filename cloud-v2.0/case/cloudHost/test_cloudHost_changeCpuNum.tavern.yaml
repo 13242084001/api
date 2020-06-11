@@ -1,0 +1,106 @@
+---
+test_name: P_云资源—云主机-running状态增加cpu个数|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 增加cpu颗数
+    request:
+      url: "{url}/cloudHost/changeNumberOfCPU.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        vmid: "{console_token}"
+        cpunum: "{cpunum_add}"
+        operationType: 1029
+        logAction[id]: 1029
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_modify_cpu_num_ok
+        extra_kwargs:
+          cpunum_new: "{cpunum_add}"
+
+---
+test_name: Q_云资源—云主机-running状态减少cpu个数|cloudHost
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 获取vmid
+    request:
+      url: "{url}/cloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:get_console_token
+
+  - name: 减少cpu颗数
+    request:
+      url: "{url}/cloudHost/changeNumberOfCPU.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        vmid: "{console_token}"
+        cpunum: "{cpunum_cut}"
+        operationType: 1029
+        logAction[id]: 1029
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_modify_cpu_num_ok
+        extra_kwargs:
+          cpunum_new: "{cpunum_cut}"
+

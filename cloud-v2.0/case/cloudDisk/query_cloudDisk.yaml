@@ -1,0 +1,25 @@
+---
+name: 查找云盘
+description: ----
+
+stages:
+  - id: query_cloudDisk
+    name: ---
+    request:
+      url: "{url}/cloudDisk/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchitem: 0
+        keyword: null
+        state: null
+    response:
+      status_code: 200
+      save:
+        json:
+          volid: rows[0].volumeid
