@@ -51,6 +51,7 @@ stages:
         function: verify.verify:check_modify_mem_ok
         extra_kwargs:
           memorysize: !int "{memorysize_modify}"
+          hostip: "{hostip}"
     #delay_after: 1
 
 ---

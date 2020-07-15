@@ -50,6 +50,7 @@ stages:
         function: verify.verify:check_modify_cpu_num_ok
         extra_kwargs:
           cpunum_new: "{cpunum_add}"
+          hostip: "{hostip}"
 
 ---
 test_name: Q_云资源—云主机-running状态减少cpu个数|cloudHost
@@ -103,4 +104,5 @@ stages:
         function: verify.verify:check_modify_cpu_num_ok
         extra_kwargs:
           cpunum_new: "{cpunum_cut}"
+          hostip: "{hostip}"
 

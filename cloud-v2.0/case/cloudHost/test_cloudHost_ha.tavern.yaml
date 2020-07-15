@@ -32,27 +32,28 @@ stages:
 
 
   - name: 设置高可用
-      request:
-        url: "{url}/cloudHost/setHA.do"
-        method: POST
-        verify: false
-        headers:
-          Cookie: "{cookie}"
-        json:
+    request:
+      url: "{url}/cloudHost/setHA.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        vmid: "{vmid}"
+        vmlevel: 2
+        operationType: 1019
+        logAction[id]: 1019
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudHost_setHa_ok
+        extra_kwargs:
           vmid: "{vmid}"
-          vmlevel: 2
-          operationType: 1019
-          logAction[id]: 1019
-          logAction[name]: 云主机名称
-          logAction[async]: 1
-      response:
-        status_code: 200
-        json:
-          code: 1
-        verify_response_with:
-          function: verify.verify:check_cloudHost_setHa_ok
-          extra_kwargs:
-            vmid: "{vmid}"
+          hostip: "{hostip}"
 
 
 ---
@@ -112,4 +113,5 @@ stages:
         extra_kwargs:
           vmid: "{vmid}"
           cancle: 1
+          hostip: "{hostip}"
 

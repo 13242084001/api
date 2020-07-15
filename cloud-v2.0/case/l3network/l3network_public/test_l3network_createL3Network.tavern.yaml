@@ -1,0 +1,65 @@
+---
+test_name: 1_网络资源-三层网络-添加三层网络-共有网络|l3network_public
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+marks:
+  - dependency
+  - parametrize:
+      key:
+        - cidr
+        - pnname
+        - dhcpserverip
+      vals:
+        - [172.30.1.0/24, 公有网络-1, 172.30.1.2]
+        - [172.40.1.0/24, 公有网络-2, 172.40.1.2]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_l2network_list
+  - name: 正常添加三层网络-公有网络
+    request:
+      url: "{url}/l3network/createL3Network.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cidr: "{cidr}"
+        closedhcp: false
+        dhcpserverip: ""
+        dns: ""
+        endip: ""
+        gateway: ""
+        iprangeid: ""
+        iptype: "1"
+        logAction:
+          id: 5201
+          name: "{pnname}"
+          async: 1
+        ltnid: "{l2networkid}"
+        ltnname: "L2"
+        method: "2"
+        mtu: 1420
+        networktype: "1"
+        nid: ""
+        operationType: 5201
+        pnname: "{pnname}"
+        remark: ""
+        shared: false
+        startip: ""
+        subnetmask: ""
+
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_creat_l3_net_ok

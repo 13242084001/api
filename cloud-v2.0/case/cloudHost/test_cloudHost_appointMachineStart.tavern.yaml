@@ -1,0 +1,86 @@
+#---
+#test_name: Z_云资源—云主机-指定物理机启动|cloudHost
+#
+#includes:
+#  - !include ../test_login.yaml
+#
+#strict:
+#  - json:off
+#
+#stages:
+#  - type: ref
+#    id: login_get_cookie
+#  - name: 获取vmid
+#    request:
+#      url: "{url}/cloudHost/query.do"
+#      method: GET
+#      verify: false
+#      headers:
+#        Cookie: "{cookie}"
+#      params:
+#        order: asc
+#        offset: 1
+#        limit: 21
+#        searchtype: 1
+#        keyword: null
+#        state: null
+#    response:
+#      status_code: 201
+#      save:
+#        $ext:
+#          function: utils.utils:get_stopped_and_qcow3_vm
+#          extra_kwargs:
+#            mformat: iso
+#
+#
+#  - name: 选择非iso并且启用的镜像
+#    request:
+#      url: "{url}/cloudHost/queryMirror.do"
+#      method: GET
+#      verify: false
+#      headers:
+#        Cookie: "{cookie}"
+#      params:
+#        status: 2
+#        mtype: 2
+#        notmformat: iso
+#        order: asc
+#        offset: 1
+#        limit: 6
+#        keyword: null
+#    response:
+#      status_code: 201
+#      verify_response_with:
+#        function: verify.verify:check_changeSystem_querySystem_ok
+#        extra_kwargs:
+#          vmid: "{vmid}"
+#      save:
+#        json:
+#          mirrorid: rows[1].mirrorid
+#          template_url: row[1].url
+#
+#
+#  - name: 跟换操作系统
+#    request:
+#      url: "{url}/cloudHost/changeOS.do"
+#      method: POST
+#      verify: false
+#      headers:
+#        Cookie: "{cookie}"
+#      json:
+#        vmid: "{vmid}"
+#        mirrorid: "{mirrorid}"
+#        operationType: 1024
+#        logAction[id]: 1024
+#        logAction[name]: 云主机名称
+#        logAction[async]: 2
+#    response:
+#      status_code: 201
+#      json:
+#        code: 2
+#        id: "{vmid}"
+#      verify_response_with:
+#        function: verify.verify:check_changeOs_ok
+#        extra_kwargs:
+#          template_url: "{template_url}"
+#          rootvolumeid: "{rootvolumeid}"

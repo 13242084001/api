@@ -5,14 +5,17 @@ includes:
   - !include ../test_login.yaml
   - !include ../cluster/change_zone.yaml
 
+
 marks:
   - parametrize:
       key:
         - pmname
         - hostip
       vals:
-        #- [vm.compute, 172.16.130.253]
+        - [vm.compute, 172.16.130.253]
         - [vm.node1, 172.16.130.252]
+
+  - 'dependency:["case/physicalMachine/test_physical_machine_delete.tavern.yaml::5_硬件设施-物理机-删除物理机|physicalMachine"]'
 
 stages:
   - type: ref

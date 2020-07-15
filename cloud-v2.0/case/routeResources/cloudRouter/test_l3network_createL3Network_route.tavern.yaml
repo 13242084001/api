@@ -1,0 +1,154 @@
+---
+test_name: 2_网络资源-三层网络-添加三层网络-私有网络-云路由网络-1|l3network_pri
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_l2network_list
+
+  - name: 查询云路由规格
+    request:
+      url: "{url}/l3network/queryVrouterSpec.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          rsid: rows[0].rsid
+
+  - name: 正常添加三层网络-私有网络-云路由网络
+    request:
+      url: "{url}/l3network/createL3Network.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cidr: ""
+        closedhcp: false
+        crsid: "{rsid}"
+        dhcpserverip: "200.200.1.2"
+        dns: ""
+        endip: "200.200.1.254"
+        gateway: "200.200.1.1"
+        iprangeid: ""
+        iptype: "1"
+        logAction:
+          id: 5401
+          name: "云路由网络-1"
+          async: 1
+        ltnid: "{l2networkid}"
+        ltnname: "{l2networkname}"
+        method: "1"
+        mtu: 1420
+        networktype: "2"
+        nid: ""
+        pnetworktype: "2"
+        operationType: 5401
+        pniip: ""
+        pnname: "云路由网络-1"
+        remark: "云路由网络类型"
+        rsname: ""
+        shared: false
+        startip: "200.200.1.2"
+        subnetmask: "255.255.255.0"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_creat_net_ok
+
+
+---
+test_name: 3_网络资源-三层网络-添加三层网络-私有网络-云路由网络-2|l3network_pri
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_l2network_list
+
+  - name: 查询云路由规格
+    request:
+      url: "{url}/l3network/queryVrouterSpec.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          rsid: rows[1].rsid
+
+  - name: 正常添加三层网络-私有网络-云路由网络
+    request:
+      url: "{url}/l3network/createL3Network.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cidr: ""
+        closedhcp: false
+        crsid: "{rsid}"
+        dhcpserverip: "200.200.2.2"
+        dns: ""
+        endip: "200.200.2.254"
+        gateway: "200.200.2.1"
+        iprangeid: ""
+        iptype: "1"
+        logAction:
+          id: 5401
+          name: "云路由网络-2"
+          async: 1
+        ltnid: "{l2networkid}"
+        ltnname: "{l2networkname}"
+        method: "1"
+        mtu: 1420
+        networktype: "2"
+        nid: ""
+        pnetworktype: "2"
+        operationType: 5401
+        pniip: ""
+        pnname: "云路由网络-2"
+        remark: "云路由网络类型"
+        rsname: ""
+        shared: false
+        startip: "200.200.2.2"
+        subnetmask: "255.255.255.0"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_creat_net_ok

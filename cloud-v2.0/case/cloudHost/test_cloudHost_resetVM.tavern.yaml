@@ -29,6 +29,8 @@ stages:
       save:
         $ext:
           function: utils.utils:get_stopped_and_qcow2_vm
+          extra_kwargs:
+            mformat: qcow2
 
 
   - name: 修改启动顺序

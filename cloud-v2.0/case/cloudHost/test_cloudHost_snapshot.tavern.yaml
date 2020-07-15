@@ -55,6 +55,7 @@ stages:
         function: verify.verify:check_cloudHost_makeSnapshot_ok
         extra_kwargs:
           vmid: "{console_token}"
+          hostip: "{hostip}"
 
 
 ---
@@ -100,29 +101,30 @@ stages:
 
 
   - name: 设置云主机快照
-      request:
-        url: "{url}/cloudHost/createSnapshot.do"
-        method: POST
-        verify: false
-        headers:
-          Cookie: "{cookie}"
-        json:
-          logAction:
-            id: 1917
-            name: "bvnnbnbvn-1"
-            async: 1
-          name: "snap1"
-          operationType: 1917
-          remark: ""
+    request:
+      url: "{url}/cloudHost/createSnapshot.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: 1917
+          name: "bvnnbnbvn-1"
+          async: 1
+        name: "snap1"
+        operationType: 1917
+        remark: ""
+        vmid: "{console_token}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudHost_makeSnapshot_ok
+        extra_kwargs:
           vmid: "{console_token}"
-      response:
-        status_code: 200
-        json:
-          code: 1
-        verify_response_with:
-          function: verify.verify:check_cloudHost_makeSnapshot_ok
-          extra_kwargs:
-            vmid: "{console_token}"
+          hostip: "{hostip}"
 
 
 ---
@@ -152,10 +154,12 @@ stages:
       json:
         code: 1
       save:
-        json:
-          snapshotid: [0].snapshotid
-          volumeid: [0].volumeid
-          snapname: [0].name
+#        json:
+#          snapshotid: [0].snapshotid
+#          volumeid: [0].volumeid
+#          snapname: [0].name
+        $ext:
+          function: utils.utils:save_snapshots_list
 
   - name: 恢复云主机快照
     request:

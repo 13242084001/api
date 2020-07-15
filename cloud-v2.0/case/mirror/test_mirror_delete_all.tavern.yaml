@@ -1,0 +1,56 @@
+---
+test_name: z_云资源—镜像-删除所有镜像|mirror
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+marks:
+  - delete
+  - 'dependency:["case/mirror/test_mirror_add.tavern.yaml::1_云资源—镜像-添加镜像|mirror"]'
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: ---
+    request:
+      url: "{url}/mirror/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:save_mirror_inf
+          extra_kwargs:
+            all: 0
+
+  - name: 删除所有镜像
+    request:
+      url: "{url}/mirror/delete.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        ids: "{ids}"
+        logAction:
+          id: 2104
+          name: ""
+          async: 1
+        operationType: 2104
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_delete_mirror_all_ok
+        #id: "{ids}"

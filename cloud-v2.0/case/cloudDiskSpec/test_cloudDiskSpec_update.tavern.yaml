@@ -15,6 +15,8 @@ marks:
         - [10, ddsffv$#$#@$, 999]
         - [20, 陈得紧紧的, 800]
 
+  - 'dependency:["case/cloudDiskSpec/test_cloudDiskSpec_add.tavern.yaml::1_云资源—云盘规格-添加云盘规格|cloudDiskSpec"]'
+
 stages:
   - type: ref
     id: login_get_cookie

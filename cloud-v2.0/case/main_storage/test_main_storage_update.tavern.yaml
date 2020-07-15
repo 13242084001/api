@@ -5,6 +5,10 @@ includes:
   - !include ../test_login.yaml
   - !include mainStorage_query.yaml
 
+marks:
+  - 'dependency:["case/main_storage/test_main_storage_add.tavern.yaml::1_硬件设施-主存储-添加主存储|main_storage[2-node2]"]'
+
+
 stages:
   - type: ref
     id: login_get_cookie

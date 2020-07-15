@@ -1,0 +1,53 @@
+---
+test_name: 2_云资源—回收站-恢复云主机|recycleBin
+
+includes:
+  - !include ../test_login.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询所有被删除的云主机
+    request:
+      url: "{url}/recycleCloudHost/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        #这里应传数组，多个id之间用逗号隔开
+        order: asc
+        offset: 0
+        limit: 20
+        searchtype: 0
+        keyword: null
+        state: deleted
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          vmid: rows[0].vmid
+
+  - name: 恢复vm
+    request:
+      url: "{url}/recycleCloudHost/resume.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        ids: "{vmid}"
+        logAction:
+          id: 1009
+          name: "ub"
+          async: 0
+    response:
+      status_code: 200
+      json:
+        code: 1
+        id: "{vmid}"

@@ -53,6 +53,7 @@ stages:
       save:
         json:
           pmid_2: rows[0].hostid
+          pmip: rows[0].hostip
       #verify_response_with:
       #  function: verify.verify:verify_query_cluster_all_phymachine_ok
 
@@ -81,7 +82,7 @@ stages:
           msurl: rows[0].url
           msname: rows[0].msname
 
-  - name:
+  - name: ---------
     request:
       url: "{url}/cloudDisk/migrateVM.do"
       method: POST

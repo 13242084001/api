@@ -5,6 +5,9 @@ includes:
   - !include ../test_login.yaml
   - !include query_physicalmachine.yaml
 
+marks:
+  - 'dependency:["case/physicalMachine/test_physical_machine_add.tavern.yaml::1_硬件设施-物理机-添加物理机|physicalMachine[vm.node1-172.16.130.252]"]'
+
 stages:
   - type: ref
     id: login_get_cookie
@@ -23,7 +26,7 @@ stages:
         logAction:
           async: 0
           id: 1706
-          name: "{pmname}"
+          #name: "{pmname}"
     response:
       status_code: 200
       json:
@@ -33,3 +36,4 @@ stages:
         resourceIds: null
         error: null
         async: 0
+    delay_after: 5

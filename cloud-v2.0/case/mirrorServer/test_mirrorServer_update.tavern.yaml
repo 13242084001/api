@@ -18,6 +18,8 @@ marks:
         - [fresh, "@!#%$$^&^*&*"]
         - [unripe, pear]
 
+  - 'dependency:["case/mirrorServer/test_mirrorServer_add.tavern.yaml::1_硬件设施-镜像服务器-添加镜像服务器|mirrorServer"]'
+
 stages:
   - type: ref
     id: login_get_cookie

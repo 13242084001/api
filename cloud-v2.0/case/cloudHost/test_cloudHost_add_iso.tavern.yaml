@@ -6,7 +6,7 @@ includes:
   - !include ../calculationSpecifications/test_calculationSpecificationsList.yaml
   - !include query_cloudMirrorList.yaml
   - !include ../cloudDiskSpec/test_cloudDiskSpec_query.yaml
-  - !include cloudHost_queryNetwork.yaml
+  #- !include cloudHost_queryNetwork.yaml
 
 strict:
   - json:off
@@ -20,9 +20,34 @@ stages:
     id: query_cloudMirrorList
   - type: ref
     id: query_cloudDiskSpec
-  - type: ref
-    id: query_L3network
-  - name: --------
+  #- type: ref
+  #  id: query_L3network
+  - name: 查询网络列表，选择类型
+    request:
+      url: "{url}/cloudHost/queryNetwork.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        status: 0
+        keyword: null
+        clusterid: null
+        networkids: null
+    response:
+      status_code: 200
+      save:
+        json:
+          l3networkid: rows[0].nid
+          clusterids: rows[0].clusterids[0]
+        $ext:
+          function: utils.utils:choice_network_type_to_add_vm
+          flag: 1
+
+  - name: 添加云主机
     request:
       url: "{url}/cloudHost/add.do"
       method: POST
@@ -35,7 +60,7 @@ stages:
         cdrom1: ""
         cdrom2: ""
         #集群id
-        clusterids: "{clusterids}"
+        #clusterids: "{clusterids}"
         createtype: ""
         datadiskspecid: []
         datadiskspecname: ""

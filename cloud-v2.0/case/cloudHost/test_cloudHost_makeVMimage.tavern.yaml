@@ -78,3 +78,4 @@ stages:
         code: 1
       verify_response_with:
         function: veriry.verify:check_makeVMimage_ok
+        hostip: "{hostip}"

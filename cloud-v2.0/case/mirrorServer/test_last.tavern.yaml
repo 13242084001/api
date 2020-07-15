@@ -8,6 +8,9 @@ includes:
 strict:
   - json:off
 
+marks:
+  - 'dependency:["case/mirrorServer/test_mirrorServer_delete.tavern.yaml::5_硬件设施-镜像服务器-删除镜像服务器|mirrorServer"]'
+
 stages:
   - type: ref
     id: login_get_cookie

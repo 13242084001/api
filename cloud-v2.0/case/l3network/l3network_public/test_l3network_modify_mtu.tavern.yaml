@@ -1,0 +1,60 @@
+---
+test_name: 2_网络资源-三层网络-修改mtu|l3network_public
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/l3network/l3network_public/test_l3network_createL3Network.tavern.yaml::1_网络资源-三层网络-添加三层网络-共有网络|l3network_public"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+
+  - name: 查询3层公有网络
+    request:
+      url: "{url}/l3network/1/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchitem: 0
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        $ext:
+          function: utils.utils:save_l3network_mtu
+
+  - name: 修改三层网络mtu
+    request:
+      url: "{url}/l3network/updateMtu.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        operationType: 5210
+        nid: "{nid}"
+        mtu: "{mtu}"
+        logAction[id]: 5210
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_modify_l3network_mtu
+        extra_kwargs:
+          mtu: "{mtu}"
+

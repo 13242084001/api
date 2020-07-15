@@ -1,0 +1,112 @@
+---
+test_name: 2_路由资源—云路由器-添加云路由器|cloudRouter
+
+includes:
+  - !include ../../test_login.yaml
+  - !include ../../calculationSpecifications/test_calculationSpecificationsList.yaml
+  - !include ../../cloudHost/query_cloudMirrorList.yaml
+  - !include ../../cloudDiskSpec/test_cloudDiskSpec_query.yaml
+  #- !include cloudHost_queryNetwork.yaml
+
+strict:
+  - json:off
+
+marks:
+  - parametrize:
+      key:
+        - flag
+        - index
+        - name
+      vals:
+        - [1, 1, 公有1-centos]
+        - [1, 2, 公有2-centos]
+        - [21, 1, 扁平-centos]
+        - [22, 1, 云路由1-centos]
+        - [22, 2, 云路由2-centos]
+        - [4, 1, vpc1-centos]
+        - [4, 2, vpc2-centos]
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_calculationSpecifications
+  - type: ref
+    id: query_cloudMirrorList
+  - type: ref
+    id: query_cloudDiskSpec
+  #- type: ref
+  #  id: query_L3network
+  - name: 查询网络列表，选择类型
+    request:
+      url: "{url}/cloudHost/queryNetwork.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        status: 0
+        keyword: null
+        clusterid: null
+        networkids: null
+    response:
+      status_code: 200
+      save:
+        #json:
+        #  l3networkid: rows[0].nid
+        #  clusterids: rows[0].clusterids[0]
+        $ext:
+          function: utils.utils:choice_network_type_to_add_vm
+          flag: "{flag}"
+          index: "{index}"
+
+  - name: 添加云主机
+    request:
+      url: "{url}/cloudHost/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        allocatorstrategy: "1"
+        cdrom: ""
+        cdrom1: ""
+        cdrom2: ""
+        #集群id
+        #clusterids: "{clusterids}"
+        createtype: ""
+        datadiskspecid: []
+        datadiskspecname: ""
+        datamsname: ""
+        hostname: ""
+        #
+        ips: "{l3networkid}:"
+        logAction:
+          id: 1001
+          name: "云主机名称"
+          async: 1
+        mformat: "iso"
+        #镜像id
+        mirrorid: "{iso_mirrorid}"
+        #云主机名称
+        name: "{name}"
+        network: ""
+        #L3网络
+        networkids: "{l3networkid}"
+        #指定ip
+        number: "2"
+        operationType: 1001
+        pnname: ""
+        remark: "hhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+        #云盘规格id
+        rootdiskspecid: "{specid}"
+        #云盘规格名称
+        #计算规格id
+        specid: "{calcid}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_cloudHost_add_ok

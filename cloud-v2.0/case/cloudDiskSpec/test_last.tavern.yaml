@@ -7,6 +7,9 @@ includes:
 strict:
   - json:off
 
+marks:
+  - 'dependency:["case/cloudDiskSpec/test_cloudDiskSpec_delete.tavern.yaml::3_云资源—云盘规格-删除云盘规格|cloudDiskSpec"]'
+
 stages:
   - type: ref
     id: login_get_cookie

@@ -7,6 +7,9 @@ includes:
 strict:
   - json:off
 
+marks:
+  - dependency
+
 stages:
   - type: ref
     id: login_get_cookie

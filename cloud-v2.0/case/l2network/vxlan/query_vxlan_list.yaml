@@ -1,0 +1,26 @@
+---
+name: 查询vxlan列表|vxlan
+description: ----
+
+stages:
+  - id: query_vxlan_list
+    name: ---
+    request:
+      url: "{url}/network/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchitem: 0
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          vxlanpoolid: rows[0].vxlanpoolid
+        $ext:
+          function: utils.utils:save_vxlan_pool_info

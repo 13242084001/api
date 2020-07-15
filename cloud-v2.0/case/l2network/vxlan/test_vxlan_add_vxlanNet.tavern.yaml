@@ -1,0 +1,135 @@
+---
+test_name: A_网络资源-二层网络-vxlan-正常vni范围创建vlan网络|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_vxlan_list.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/l2network/vxlan/test_vxlanPool_load_or_unload_cluster.tavern.yaml::5_网络资源-二层网络-vxlan加载集群|vxlan"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_vxlan_list
+
+  - name: 查询vni范围
+    request:
+      url: "{url}/vin/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        offset: 0
+        limit: 5
+        vxlanpoolid: "{vxlanpoolid}"
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          vnistart: rows[0].vnistart
+          endvni: rows[0].endvni
+
+  - name: 创建vxlan网络
+    request:
+      url: "{url}/vxlan/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: "5107"
+          name: ""
+          async: 1
+        name: "vxlan-net-1"
+        remark: ""
+        type: 3
+        $ext:
+          function: utils.utils:calc_vxlan_vni
+          extra_kwargs:
+            vnistart: "{vnistart}"
+            endvni: "{endvni}"
+            flag: 1
+        vxlanPoolId: "{vxlanpoolid}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: success
+
+
+---
+test_name: B_网络资源-二层网络-vxlan-超过vni范围创建vlan网络|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_vxlan_list.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/l2network/vxlan/test_vxlanPool_load_or_unload_cluster.tavern.yaml::5_网络资源-二层网络-vxlan加载集群|vxlan"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_vxlan_list
+
+  - name: 查询vni范围
+    request:
+      url: "{url}/vin/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        offset: 0
+        limit: 5
+        vxlanpoolid: "{vxlanpoolid}"
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          vnistart: rows[0].vnistart
+          endvni: rows[0].endvni
+
+  - name: 创建vxlan网络
+    request:
+      url: "{url}/vxlan/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: "5107"
+          name: ""
+          async: 1
+        name: "vxlan-net-2"
+        remark: ""
+        type: 3
+        $ext:
+          function: utils.utils:calc_vxlan_vni
+          extra_kwargs:
+            vnistart: "{vnistart}"
+            endvni: "{endvni}"
+            flag: 0
+        vxlanPoolId: "{vxlanpoolid}"
+    response:
+      status_code: 200
+      json:
+        code: 408

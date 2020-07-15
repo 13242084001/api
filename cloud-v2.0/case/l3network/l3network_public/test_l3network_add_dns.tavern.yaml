@@ -1,0 +1,82 @@
+---
+test_name: 3_网络资源-三层网络-添加dns|l3network_public
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/l3network/l3network_public/test_l3network_modify_mtu.tavern.yaml::2_网络资源-三层网络-修改mtu|l3network_public"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+
+  - name: 查询3层公有网络
+    request:
+      url: "{url}/l3network/1/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchitem: 0
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:save_l3network_mtu
+
+  - name: 查询3层公有网络dns
+    request:
+      url: "{url}/l3network/queryDnsByNid.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        nid: "{nid}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          rows: rows
+
+
+  - name: 添加三层网络dns
+    request:
+      url: "{url}/l3network/addDns.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        operationType: 5208
+        nid: "{nid}"
+        dns: 8.8.8.8
+        logAction[id]: 5208
+        logAction[name]: "{pnname}"
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_l3network_add_dns
+        extra_kwargs:
+          mtu: "{mtu}"
+          rows: "{rows}"
+          nid: "{nid}"
+          dns_addr: 8.8.8.8

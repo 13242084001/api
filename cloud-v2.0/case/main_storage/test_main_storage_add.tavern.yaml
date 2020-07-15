@@ -7,13 +7,14 @@ includes:
   - !include ../zone/query_zone.yaml
 
 marks:
+  - 'dependency'
   - parametrize:
       key:
         - msname
         - path
       vals:
-        - [main_storage1, node1]
-        - [main_storage2, node2]
+        - [1, node1]
+        - [2, node2]
 
 stages:
   - type: ref
@@ -22,7 +23,7 @@ stages:
     id: query_cluster
   - type: ref
     id: query_zone_list
-  - name: 正常添加集群
+  - name: 正常添加主存储
     request:
       url: "{url}/primarystorage/add.do"
       method: POST
@@ -47,5 +48,7 @@ stages:
       status_code: 200
       verify_response_with:
         function: verify.verify:check_mainStorage_addCluster_ok
+        extra_kwargs:
+          clusterId: "{clusterid}"
+          uri: "/mnt/localfs/{path}"
 
-    delay_after: 10

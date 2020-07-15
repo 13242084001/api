@@ -56,6 +56,7 @@ stages:
         extra_kwargs:
           vmid: "{console_token}"
           bootSeq: 1
+          hostip: "{hostip}"
 
 
 ---
@@ -116,3 +117,4 @@ stages:
         extra_kwargs:
           vmid: "{console_token}"
           bootSeq: 2
+          hostip: "{hostip}"

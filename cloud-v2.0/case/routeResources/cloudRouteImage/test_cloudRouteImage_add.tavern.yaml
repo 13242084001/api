@@ -1,0 +1,63 @@
+---
+test_name: 1_路由资源—云路由镜像-添加云路由镜像|cloudRouteImage
+
+includes:
+  - !include ../../test_login.yaml
+  #- !include ../../mirrorServer/mirrorServer_query.yaml
+
+strict:
+  - json:off
+
+marks:
+  - dependency
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  #- type: ref
+  #  id: query_mirrorServerList
+  - name: 查询镜像服务器列表
+    request:
+      url: "{url}/vRouterIso/queryIsoSer.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          mirrorServerId: rows[0].msid
+          mirrorSeverName: rows[0].msname
+
+  - name: 添加云路由镜像
+    request:
+      url: "{url}/vRouterIso/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: 5550
+          name: "云路由镜像-2"
+          async: 1
+        mname: "云路由镜像-2"
+        msid: "{mirrorServerId}"
+        msname: "{mirrorSeverName}"
+        operationType: 5550
+        remark: ""
+        #url: "{path}"
+        $ext:
+          function: utils.utils:upload_iso
+          extra_kwargs:
+            iso_type: "route_qcow2"
+    response:
+      status_code: 200
+      json:
+        code: 1

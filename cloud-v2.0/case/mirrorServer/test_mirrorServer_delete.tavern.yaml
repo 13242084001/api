@@ -8,6 +8,11 @@ includes:
 strict:
   - json:off
 
+marks:
+  - delete
+
+  - 'dependency:["case/mirrorServer/test_mirrorServer_add.tavern.yaml::1_硬件设施-镜像服务器-添加镜像服务器|mirrorServer"]'
+
 stages:
   - type: ref
     id: login_get_cookie
@@ -40,4 +45,7 @@ stages:
       status_code: 200
       json:
         code: 1
-    delay_after: 5
+      verify_response_with:
+        function: verify.verify:check_delete_mirrorServer_ok
+        extra_kwargs:
+          mirrorServerid: "{mirrorServerId}"

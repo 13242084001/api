@@ -1,0 +1,83 @@
+---
+test_name: 9_网络资源-二层网络-vxlan-删除vni范围|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_vxlan_list.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/l2network/vxlan/test_add_vxlanPool.tavern.yaml::1_网络资源-二层网络-添加vxlan-pool|vxlan[1-100-172.16.130.0/24-vxlan-pool-3]"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_vxlan_list
+
+  - name: 查询vni范围
+    request:
+      url: "{url}/vin/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        offset: 0
+        limit: 5
+        vxlanpoolid: "{vxlanpoolid}"
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          vinid: rows[0].vinid
+          vnistart: rows[0].vnistart
+          endvni: rows[0].endvni
+
+  - name: 查询vxlan网络
+    request:
+      url: "{url}/network/selectErVxlan.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        vxlanpoolid: "{vxlanpoolid}"
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        $ext:
+          function: utils.utils:save_vxlanNet_vni_list
+
+  - name: 删除vni范围
+    request:
+      url: "{url}/vin/deleteVin.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: 5007
+          async: 0
+        ids: "{vinid}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_delete_vni_range_ok
+        extra_kwargs:
+          vni_list: "{vni_list}"
+          vnistart: "{vnistart}"
+          endvni: "{endvni}"
+

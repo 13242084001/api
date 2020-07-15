@@ -1,0 +1,122 @@
+---
+test_name: 1_vpc—vpc网络-添加vpc网络|vpc_network
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/vpc/vpc_router/test_vpcRouter_add.tavern.yaml::1_vpc—vpc路由器-添加vpc路由器|vpc_router"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_l2network_list
+  - name: 查询云路由规格
+    request:
+      url: "{url}/vpcnetwork/queryVpcRouter.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        ltnid: "{l2networkid}"
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          routerid_1: rows[0].routerid
+          routername_1: rows[0].name
+          routerid_2: rows[1].routerid
+          routername_2: rows[1].name
+
+  - name: 添加vpc网络-1
+    request:
+      url: "{url}/vpcnetwork/createVpcNetwork.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cidr: "100.100.100.0/24"
+        closedhcp: false
+        dhcpserverip: "100.100.100.2"
+        endip: ""
+        gateway: ""
+        iprangeid: ""
+        iptype: "1"
+        logAction:
+          id: 8401
+          name: "vpc-net-1"
+          async: 1
+        ltnid: "{l2networkid}"
+        ltnname: "L2"
+        method: "2"
+        mtu: 1420
+        networktype: "4"
+        nid: ""
+        operationType: 8401
+        pnname: "vpc-net-1"
+        remark: ""
+        routerid: "{routerid_1}"
+        shared: false
+        startip: ""
+        subnetmask: ""
+        vpcroutername: "{routername_1}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_vpc_network_add_ok
+
+
+  - name: 添加vpc网络-1
+    request:
+      url: "{url}/vpcnetwork/createVpcNetwork.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cidr: "200.200.200.0/24"
+        closedhcp: false
+        dhcpserverip: "200.200.200.2"
+        endip: ""
+        gateway: ""
+        iprangeid: ""
+        iptype: "1"
+        logAction:
+          id: 8401
+          name: "vpc-net-2"
+          async: 1
+        ltnid: "{l2networkid}"
+        ltnname: "L2"
+        method: "2"
+        mtu: 1420
+        networktype: "4"
+        nid: ""
+        operationType: 8401
+        pnname: "vpc-net-2"
+        remark: ""
+        routerid: "{routerid_2}"
+        shared: false
+        startip: ""
+        subnetmask: ""
+        vpcroutername: "{routername_2}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_vpc_network_add_ok

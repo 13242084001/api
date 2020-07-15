@@ -14,11 +14,11 @@ stages:
       params:
         order: asc
         offset: 0
-        limit: 20
+        limit: 5
         keyword: null
     response:
       status_code: 200
       save:
         json:
-          mirrorServerId: rows[0].id
-          mirrorSeverName: rows[0].name
+          mirrorServerId: rows[0].msid
+          mirrorSeverName: rows[0].msname

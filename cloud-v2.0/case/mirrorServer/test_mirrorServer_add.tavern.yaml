@@ -8,6 +8,9 @@ includes:
 strict:
   - json:off
 
+marks:
+  - "dependency"
+
 stages:
   - type: ref
     id: login_get_cookie
@@ -37,4 +40,6 @@ stages:
       status_code: 200
       json:
         code: 1
-    delay_after: 8
+      verify_response_with:
+        function: verify.verify:check_add_mirrorServer_ok
+    delay_after: 10

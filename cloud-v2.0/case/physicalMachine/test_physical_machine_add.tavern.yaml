@@ -11,9 +11,9 @@ marks:
         - pmname
         - hostip
       vals:
-        #- [vm.compute, 172.16.130.253]
+        - [vm.compute, 172.16.130.253]
         - [vm.node1, 172.16.130.252]
-
+  - 'dependency'
 stages:
   - type: ref
     id: login_get_cookie

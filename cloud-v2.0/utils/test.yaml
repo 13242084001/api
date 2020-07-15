@@ -1,0 +1,42 @@
+---
+stages:
+- name: getfindPets
+  request:
+    method: GET
+    url: http://172.16.130.254:5000/pets
+  response:
+    status_code: 200
+    strict: false
+test_name: getfindPets
+---
+stages:
+- name: postaddPet
+  request:
+    method: POST
+    url: http://172.16.130.254:5000/pets
+  response:
+    status_code: 200
+    strict: false
+test_name: postaddPet
+---
+stages:
+- name: getfind pet by id
+  request:
+    method: GET
+    url: http://172.16.130.254:5000/pets/{id}
+  response:
+    status_code: 200
+    strict: false
+test_name: getfind pet by id
+---
+stages:
+- name: deletedeletePet
+  request:
+    json:
+      id: required
+    method: DELETE
+    url: http://172.16.130.254:5000/pets/{id}
+  response:
+    status_code: 200
+    strict: false
+test_name: deletedeletePet

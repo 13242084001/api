@@ -1,11 +1,14 @@
 ---
-test_name: 1_云资源—计算规格|calculationSpecifications
+test_name: 1_云资源—计算规格-添加计算规格|calculationSpecifications
 
 includes:
   - !include ../test_login.yaml
 
 strict:
   - json:off
+
+marks:
+  - dependency
 
 stages:
   - type: ref

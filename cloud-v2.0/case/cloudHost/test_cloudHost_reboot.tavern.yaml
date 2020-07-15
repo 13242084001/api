@@ -64,6 +64,7 @@ stages:
         function: verify.verify:check_pause_forceStop_stop_ok
         extra_kwargs:
           action: paused
+          hostip: "{hostip}"
 
 ---
 test_name: D_云资源—云主机-打开控制台|cloudHost
@@ -167,6 +168,7 @@ stages:
         function: verify.verify:check_pause_forceStop_stop_ok
         extra_kwargs:
           action: shut
+          hostip: "{hostip}"
 
 ---
 test_name: F_云资源—云主机-启动停止的云主机|cloudHost
@@ -230,6 +232,7 @@ stages:
         function: verify.verify:check_pause_forceStop_stop_ok
         extra_kwargs:
           action: running
+          hostip: "{hostip}"
 
 ---
 test_name: G_云资源—云主机-单个停用云主机|cloudHost
@@ -291,6 +294,7 @@ stages:
         function: verify.verify:check_pause_forceStop_stop_ok
         extra_kwargs:
           action: shut
+          hostip: "{hostip}"
 
   - name: 启动云主机
     request:
@@ -320,5 +324,6 @@ stages:
         function: verify.verify:check_pause_forceStop_stop_ok
         extra_kwargs:
           action: running
+          hostip: "{hostip}"
 
 

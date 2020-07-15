@@ -1,0 +1,34 @@
+---
+test_name: 2_网络资源-二层网络-删除vxlan-pool|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_vxlan_list.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/l2network/vxlan/test_add_vxlanPool.tavern.yaml::1_网络资源-二层网络-添加vxlan-pool|vxlan[1-100-172.16.130.0/24-vxlan-pool-3]"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_vxlan_list
+  - name: 删除vxlan-pool
+    request:
+      url: "{url}/network/deleteVxlan.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        logAction:
+          id: 5003
+          async: 0
+        ids: "{vxlan_pool_ids}"
+    response:
+      status_code: 200
+      json:
+        code: 1

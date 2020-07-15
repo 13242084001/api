@@ -80,3 +80,4 @@ stages:
         extra_kwargs:
           vmid: "{console_token}"
           mirrorid: "{mirrorid}"
+          hostip: "{hostip}"

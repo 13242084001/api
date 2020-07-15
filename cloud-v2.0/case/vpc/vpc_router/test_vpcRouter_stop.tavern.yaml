@@ -1,0 +1,56 @@
+---
+test_name: 3_vpc—vpc路由器-停止vpc路由器|vpc_router
+
+includes:
+  - !include ../../test_login.yaml
+
+strict:
+  - json:off
+
+marks:
+  - dependency
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询vpc路由器列表
+    request:
+      url: "{url}/vpcrouter/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          routerid: rows[0].routerid
+          routername: rows[0].name
+
+  - name: 停止vpc路由器
+    request:
+      url: "{url}/vpcrouter/stop.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        ids: "{routerid}"
+        logAction:
+          id: 8303
+          name: "{routername}"
+          async: 1
+        operationType: 8303
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_vpc_router_stop_or_start

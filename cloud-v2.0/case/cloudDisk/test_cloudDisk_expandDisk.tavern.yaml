@@ -58,4 +58,5 @@ stages:
         function: verify.verify:check_cloudDisk_expandVol_ok
         extra_kwargs:
           installpath: "{installpath}"
-          size: "{size}"G
+          size: "{size}G"
+          hostip: "{pmip}"

@@ -5,6 +5,9 @@ includes:
   - !include ../test_login.yaml
   - !include test_cloudDiskSpec_query.yaml
 
+marks:
+  - 'dependency:["case/cloudDiskSpec/test_cloudDiskSpec_add.tavern.yaml::1_云资源—云盘规格-添加云盘规格|cloudDiskSpec"]'
+
 stages:
   - type: ref
     id: login_get_cookie

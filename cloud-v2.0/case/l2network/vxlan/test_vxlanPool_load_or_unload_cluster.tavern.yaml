@@ -1,0 +1,125 @@
+---
+test_name: 4_网络资源-二层网络-vxlan卸载集群|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_vxlan_list.yaml
+
+strict:
+  - json:off
+
+marks:
+  #- skip
+  - 'dependency:["case/l2network/vxlan/test_add_vxlanPool.tavern.yaml::1_网络资源-二层网络-添加vxlan-pool|vxlan[1-100-172.16.130.0/24-vxlan-pool-3]"]'
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_vxlan_list
+  - name: 查询已加载的集群
+    request:
+      url: "{url}/network/selcetClusters.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+        vxlanpoolid: "{vxlanpoolid}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          clusterid: rows[0].clusterid
+
+  - name: vxlan卸载集群
+    request:
+      url: "{url}/network/unloadCluster.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        vxlanpoolid: "{vxlanpoolid}"
+      json:
+        ids: "{clusterid}"
+        logAction:
+          id: 5005
+          async: 1
+        operationType: 5005
+        vxlanpoolid: "{vxlanpoolid}"
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: success
+
+---
+test_name: 5_网络资源-二层网络-vxlan加载集群|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_vxlan_list.yaml
+
+strict:
+  - json:off
+
+marks:
+  #- skip
+  - 'dependency:["case/l2network/vxlan/test_vxlanPool_load_or_unload_cluster.tavern.yaml::4_网络资源-二层网络-vxlan卸载集群|vxlan"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_vxlan_list
+  - name: 查询未加载的集群
+    request:
+      url: "{url}/network/selcetAllClusters.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        vxlanpoolid: "{vxlanpoolid}"
+        keyword: null
+    response:
+      status_code: 200
+      json:
+        code: 1
+      save:
+        json:
+          clusterid: rows[0].clusterid
+          clustername: rows[0].clustername
+
+  - name: vxlan加载集群
+    request:
+      url: "{url}/network/loadCluster.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        clusterid: "{clusterid}"
+        clustername: "{clustername}"
+        logAction:
+          id: 5004
+          async: 1
+        operationType: 5004
+        vtepcidr: "172.16.130.0/24"
+        vxlanpoolid: "{vxlanpoolid}"
+
+    response:
+      status_code: 200
+      json:
+        code: 1
+        msg: success
+

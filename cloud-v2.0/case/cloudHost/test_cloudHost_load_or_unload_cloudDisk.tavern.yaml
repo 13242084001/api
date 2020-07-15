@@ -57,28 +57,28 @@ stages:
           volid: rows[0].volumeid
 
   - name: 加载云盘
-      request:
-        url: "{url}/cloudHost/loadDisk.do"
-        method: POST
-        verify: false
-        headers:
-          Cookie: "{cookie}"
-        json:
+    request:
+      url: "{url}/cloudHost/loadDisk.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        vmid: "{console_token}"
+        volumeid: "{volid}"
+        operationType: 1017
+        logAction[id]: 1017
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudDiskLoad_or_unload_ok
+        extra_kwargs:
           vmid: "{console_token}"
           volumeid: "{volid}"
-          operationType: 1017
-          logAction[id]: 1017
-          logAction[name]: 云主机名称
-          logAction[async]: 1
-      response:
-        status_code: 200
-        json:
-          code: 1
-        verify_response_with:
-          function: verify.verify:check_cloudDiskLoad_or_unload_ok
-          extra_kwargs:
-            vmid: "{console_token}"
-            volumeid: "{volid}"
 
 
 ---
@@ -121,26 +121,26 @@ stages:
           volid: rows[0].volumeid
 
   - name: 卸载云盘
-      request:
-        url: "{url}/cloudHost/unloadDisk.do"
-        method: POST
-        verify: false
-        headers:
-          Cookie: "{cookie}"
-        json:
+    request:
+      url: "{url}/cloudHost/unloadDisk.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        vmid: "{console_token}"
+        volumeid: "{volid}"
+        operationType: 1018
+        logAction[id]: 1018
+        logAction[name]: 云主机名称
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_cloudDiskLoad_or_unload_ok
+        extra_kwargs:
           vmid: "{console_token}"
           volumeid: "{volid}"
-          operationType: 1018
-          logAction[id]: 1018
-          logAction[name]: 云主机名称
-          logAction[async]: 1
-      response:
-        status_code: 200
-        json:
-          code: 1
-        verify_response_with:
-          function: verify.verify:check_cloudDiskLoad_or_unload_ok
-          extra_kwargs:
-            vmid: "{console_token}"
-            volumeid: "{volid}"
-            typee: 0
+          typee: 0

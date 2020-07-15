@@ -1,0 +1,84 @@
+---
+test_name: 1_vpc—vpc路由器-添加vpc路由器|vpc_router
+
+includes:
+  - !include ../../test_login.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/routeResources/cloudRouteSpec/test_cloudRouteSpec_add.tavern.yaml::1_路由资源—云路由规格-添加云路由规格|cloudRouteSpec"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询云路由规格
+    request:
+      url: "{url}/vpcrouter/queryRouterSpec.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          rsid_1: rows[0].rsid
+          rsname_1: rows[0].rsname
+          rsid_2: rows[1].rsid
+          rsname_2: rows[1].rsname
+
+  - name: 添加vpc路由器-1
+    request:
+      url: "{url}/vpcrouter/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        defaultip: ""
+        dns: ""
+        logAction:
+          id: 8301
+          name: "vpc-1-centos7"
+          async: 1
+        name: "vpc-1-centos7"
+        operationType: 8301
+        remark: ""
+        rsid: "{rsid_1}"
+        rsname: "{rsname_1}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_cloudHost_add_ok
+
+
+  - name: 添加vpc路由器-2
+    request:
+      url: "{url}/vpcrouter/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        defaultip: ""
+        dns: ""
+        logAction:
+          id: 8301
+          name: "vpc-2-centos7"
+          async: 1
+        name: "vpc-2-centos7"
+        operationType: 8301
+        remark: ""
+        rsid: "{rsid_2}"
+        rsname: "{rsname_2}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_cloudHost_add_ok

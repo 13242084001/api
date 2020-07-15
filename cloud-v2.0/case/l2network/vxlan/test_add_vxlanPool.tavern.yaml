@@ -1,0 +1,54 @@
+---
+test_name: 1_网络资源-二层网络-添加vxlan-pool|vxlan
+
+includes:
+  - !include ../../test_login.yaml
+  - !include ../../cluster/change_zone.yaml
+
+strict:
+  - json:off
+
+marks:
+  - parametrize:
+      key:
+        - vnistart
+        - endvni
+        - vtepcidr
+        - vxlanpoolname
+      vals:
+        - [101, 9999999999, '192.168.10.0/24', vxlan-pool-1]
+        - [20, 30, '10.10.10.10/24', vxlan-pool-2]
+        - [1, 100, '172.16.130.0/24', vxlan-pool-3]
+  - dependency
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cluster
+  - name: 正常添加二层vxlan-pool
+    request:
+      url: "{url}/network/addVxlan.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        clusterid: "{clusterid}"
+        clustername: "{clustername}"
+        endvni: "{endvni}"
+        logAction:
+          id: 5001
+          async: 1
+        remark: ""
+        vnistart: "{vnistart}"
+        vtepcidr: "{vtepcidr}"
+        vxlanpoolname: "{vxlanpoolname}"
+
+    response:
+      status_code: 200
+      verify_response_with:
+        function: verify.verify:check_creat_vxlanPool_ok
+        extra_kwargs:
+          pool_name: "{vxlanpoolname}"
+

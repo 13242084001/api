@@ -42,16 +42,15 @@ def get_file_md5(fname):
             m.update(data)  #更新md5对象
     return m.hexdigest()    #返回md5对象
 
-file_name = r"CentOS-7-x86_64-Minimal-2003.iso"
-file_path = r"C:\Users\lq\Desktop\api\api\cloud-v2.0\common" + "\\"
+
 
 #print(file_md5)
 
 #print(chunkSize)
 count = 0
 #切割大文件
-def cut_big_file():
-    global count, file_path
+def cut_big_file(file_path, file_name):
+    global count
     file_size = 50 * 1024 * 1024
     eof = False
     with open(file_path + file_name, 'rb') as f_source:
@@ -69,12 +68,32 @@ def cut_big_file():
                 print("file cut finished\n")
                 return
 
-def start_upload():
+
+def del_iso_splice(path):
+    ls = os.listdir(path)
+    for i in ls:
+        c_path = os.path.join(path, i)
+        if os.path.isdir(c_path):
+            del_iso_splice(c_path)
+        else:
+            os.remove(c_path)
+
+def start_upload(iso_type="iso"):
+    if iso_type == "qcow2":
+        file_name = r"CentOS-7-x86_64-Minimal-2003.iso"
+        file_path = r"C:\Users\lq\Desktop\api\api\cloud-v2.0\common" + "\\"
+    elif iso_type == "route_qcow2":
+        file_name = r"vyos-agent.qcow2"
+        file_path = r"C:\Users\lq\Desktop\api\api\cloud-v2.0\common" + "\\"
+    else:
+        file_name = r"CentOS-7-x86_64-Minimal-2003.iso"
+        file_path = r"C:\Users\lq\Desktop\api\api\cloud-v2.0\common" + "\\"
     des_cookie = login()
     # 获取iso文件大小
     chunkSize = os.path.getsize(file_path + file_name)
     file_md5 = get_file_md5(file_path + file_name)
-    cut_big_file()
+    cut_big_file(file_path, file_name)
+    file_path = file_path + "tmp\\"
     for i in range(0, count):
         params = {
             "param": "checkChunk",
@@ -102,7 +121,8 @@ def start_upload():
     #print(re.text)
     if re.json().get("success"):
         time.sleep(5)
-        return re.json()
+        #del_iso_splice(file_path)
+        return re.json(), file_path
     return False
 
 if __name__ == "__main__":

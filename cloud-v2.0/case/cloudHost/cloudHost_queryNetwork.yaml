@@ -4,7 +4,7 @@ description: ----
 
 stages:
   - id: query_L3network
-    name: ---
+    name: 查询网络列表，选择类型
     request:
       url: "{url}/cloudHost/queryNetwork.do"
       method: GET
@@ -25,3 +25,5 @@ stages:
         json:
           l3networkid: rows[0].nid
           clusterids: rows[0].clusterids[0]
+        $ext:
+          function: utils.utils:choice_network_type_to_add_vm

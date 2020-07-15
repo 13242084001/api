@@ -1,0 +1,131 @@
+---
+test_name: 1_路由资源—云路由规格-添加云路由规格|cloudRouteSpec
+
+includes:
+  - !include ../../test_login.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/routeResources/cloudRouteImage/test_cloudRouteImage.tavern.yaml::1_路由资源—云路由镜像-添加云路由镜像|cloudRouteImage"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询云路由镜像列表
+    request:
+      url: "{url}/routerSpec/queryMirror.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        status: 1
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          mirrorId: rows[0].mirrorid
+          #mirrorSeverName: rows[0].msname
+
+  - name: 查询管理网络
+    request:
+      url: "{url}/routerSpec/queryNetwork.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        type: 2
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          manage_nid: rows[0].nid
+
+  - name: 查询公有网络
+    request:
+      url: "{url}/routerSpec/queryNetwork.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 5
+        type: 1
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          public_nid_1: rows[0].nid
+          public_nid_2: rows[1].nid
+
+  - name: 添加云路由规格-1
+    request:
+      url: "{url}/routerSpec/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cpu: "2"
+        logAction:
+          id: 5601
+          async: 0
+        managenetworkid: "{manage_nid}"
+        #managenetworkname: "系统网络-1"
+        memoryui: "4"
+        memoryunit: "G"
+        mirrorid: "{mirrorId}"
+        #mirrorname: "云路由镜像-1"
+        operationType: 5601
+        publicnetworkid: "{public_nid_1}"
+        #publicnetworkname: "tt"
+        remark: ""
+        rsid: ""
+        rsname: "云路由规格1"
+    response:
+      status_code: 200
+      json:
+        code: 1
+
+  - name: 添加云路由规格-2
+    request:
+      url: "{url}/routerSpec/add.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cpu: "2"
+        logAction:
+          id: 5601
+          async: 0
+        managenetworkid: "{manage_nid}"
+        #managenetworkname: "系统网络-1"
+        memoryui: "4"
+        memoryunit: "G"
+        mirrorid: "{mirrorId}"
+        #mirrorname: "云路由镜像-1"
+        operationType: 5601
+        publicnetworkid: "{public_nid_2}"
+        #publicnetworkname: "tt"
+        remark: ""
+        rsid: ""
+        rsname: "云路由规格2"
+    response:
+      status_code: 200
+      json:
+        code: 1

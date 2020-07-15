@@ -1,0 +1,59 @@
+---
+test_name: 5_vpc—vpc路由器-设置vpc路由器控制台密码|vpc_router
+
+includes:
+  - !include ../../test_login.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/vpc/vpc_router/test_vpcRouter_add.tavern.yaml::1_vpc—vpc路由器-添加vpc路由器|vpc_router"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询vpc路由器列表
+    request:
+      url: "{url}/vpcrouter/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          routerid: rows[1].routerid
+          routername: rows[1].name
+          hostip: rows[1].hostIp
+
+  - name: 设置vpc路由器控制台密码
+    request:
+      url: "{url}/vpcrouter/setConsolePwd.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        routerid: "{routerid}"
+        password: 123456
+        operationType: 8307
+        logAction[id]: 8307
+        logAction[name]: "{routername}"
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+        id: "{routerid}"
+      verify_response_with:
+        function: verify.verify:check_setConsolePasswd_ok
+        extra_kwargs:
+          passwd: 123456
+          hostip: "{hostip}"

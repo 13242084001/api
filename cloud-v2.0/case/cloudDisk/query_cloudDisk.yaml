@@ -23,3 +23,5 @@ stages:
       save:
         json:
           volid: rows[0].volumeid
+        $ext:
+          function: utils.utils:save_all_cloudDisk_list

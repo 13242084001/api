@@ -21,3 +21,5 @@ stages:
       save:
         json:
           specid: rows[0].specid
+        $ext:
+          function: utils.utils:save_all_cloudDiskSpecId

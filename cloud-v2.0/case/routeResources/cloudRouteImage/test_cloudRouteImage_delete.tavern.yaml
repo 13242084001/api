@@ -1,0 +1,36 @@
+---
+test_name: 4_路由资源—云路由镜像-删除云路由镜像|cloudRouteImage
+
+includes:
+  - !include ../../test_login.yaml
+  - !include query_cloudRouteImage.yaml
+
+strict:
+  - json:off
+
+marks:
+  - dependency:["case/routeResources/cloudRouteImage/test_cloudRouteImage_add.tavern.yaml::1_路由资源—云路由镜像-添加云路由镜像|cloudRouteImage"]
+  - delete
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_cloudRouteImage
+  - name: 删除云路由镜像
+    request:
+      url: "{url}/vRouterIso/delete.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        ids: "{mirrorid}"
+        logAction:
+          id: 2104
+          name: "镜像名称"
+          async: 0
+    response:
+      status_code: 200
+      json:
+        code: 1

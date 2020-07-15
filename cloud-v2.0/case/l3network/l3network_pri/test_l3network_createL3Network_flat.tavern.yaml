@@ -1,0 +1,57 @@
+---
+test_name: 1_网络资源-三层网络-添加三层网络-私有网络-扁平网络|l3network_pri
+
+includes:
+  - !include ../../test_login.yaml
+  - !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - type: ref
+    id: query_l2network_list
+  - name: 正常添加三层网络-私有网络-扁平网络
+    request:
+      url: "{url}/l3network/createL3Network.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        cidr: ""
+        closedhcp: false
+        crsid: ""
+        dhcpserverip: "192.168.2.2"
+        dns: "114.114.114.114"
+        endip: "192.168.2.100"
+        gateway: "192.168.2.1"
+        iprangeid: ""
+        iptype: "1"
+        logAction:
+          id: 5401
+          name: "pri2"
+          async: 1
+        ltnid: "{l2networkid}"
+        ltnname: "{l2networkname}"
+        method: "1"
+        mtu: 1420
+        networktype: "2"
+        nid: ""
+        pnetworktype: "1"
+        operationType: 5401
+        pniip: ""
+        pnname: "pri2"
+        remark: "fjdsfjds"
+        rsname: ""
+        shared: false
+        startip: "192.168.2.2"
+        subnetmask: "255.255.255.0"
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verify:check_creat_l3_net_ok

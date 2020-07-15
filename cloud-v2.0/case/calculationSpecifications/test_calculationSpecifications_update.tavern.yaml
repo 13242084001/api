@@ -8,6 +8,9 @@ includes:
 strict:
   - json:off
 
+marks:
+  - 'dependency:["case/calculationSpecifications/test_calculationSpecifications_add.tavern.yaml::1_云资源—计算规格-添加计算规格|calculationSpecifications"]'
+
 stages:
   - type: ref
     id: login_get_cookie

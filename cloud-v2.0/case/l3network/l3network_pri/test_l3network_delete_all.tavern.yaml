@@ -1,0 +1,54 @@
+---
+test_name: z_网络资源-三层网络-删除三层网络-删除所有私有网络|l3network_pri
+
+includes:
+  - !include ../../test_login.yaml
+  #- !include l3network_queryLayerTwoNetwork.yaml
+
+strict:
+  - json:off
+
+marks:
+  - delete
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询三层私有网络
+    request:
+      url: "{url}/l3network/2/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        searchitem: 0
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: utils.utils:save_l3pri_id_list
+
+  - name: 删除三层网络-私有网络
+    request:
+      url: "{url}/l3network/deleteL3Network.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        ids: "{ids}"
+        logAction:
+          id: 5403
+          async: 1
+        operationType: 5403
+    response:
+      status_code: 200
+      json:
+        code: 1
+      verify_response_with:
+        function: verify.verfiy:check_delete_net

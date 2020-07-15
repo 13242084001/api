@@ -1,0 +1,62 @@
+---
+test_name: 8_vpc—vpc路由器-修改vpc路由器内存|vpc_router
+
+includes:
+  - !include ../../test_login.yaml
+
+strict:
+  - json:off
+
+marks:
+  - 'dependency:["case/vpc/vpc_router/test_vpcRouter_add.tavern.yaml::1_vpc—vpc路由器-添加vpc路由器|vpc_router"]'
+
+stages:
+  - type: ref
+    id: login_get_cookie
+  - name: 查询vpc路由器列表
+    request:
+      url: "{url}/vpcrouter/query.do"
+      method: GET
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      params:
+        order: asc
+        offset: 0
+        limit: 20
+        keyword: null
+    response:
+      status_code: 200
+      save:
+        json:
+          routerid: rows[1].routerid
+          routername: rows[1].name
+          hostip: rows[1].hostIp
+        $ext:
+          function: utils.utils:choice_vpc_memory
+
+  - name: 修改vpc路由器内存
+    request:
+      url: "{url}/vpcrouter/resizeRAM.do"
+      method: POST
+      verify: false
+      headers:
+        Cookie: "{cookie}"
+      json:
+        routerid: "{routerid}"
+        memorysize: "{memory}"
+        memorysizeunit: G
+        operationType: 8311
+        logAction[id]: 8311
+        logAction[name]: "{routername}"
+        logAction[async]: 1
+    response:
+      status_code: 200
+      json:
+        code: 1
+        id: "{routerid}"
+      verify_response_with:
+        function: verify.verify:check_modifyVpcMem_ok
+        extra_kwargs:
+          hostip: "{hostip}"
+          memory: "{memory}"
